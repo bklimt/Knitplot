@@ -1,0 +1,107 @@
+
+package chart_proto;
+
+// Graphics
+
+message Color {
+  required int32 red = 1;
+  required int32 green = 2;
+  required int32 blue = 3;
+}
+
+message Style {
+  optional Color fill = 1;
+  optional Color stroke = 2;
+  optional int32 stroke_width = 3 [default = 1];
+}
+
+message Point {
+  required float x = 1;
+  required float y = 2;
+}
+
+message Line {
+  required Point point1 = 1;
+  required Point point2 = 2;
+}
+
+message Rectangle {
+  required Point top_left = 1;
+  required float width = 2;
+  required float height = 3;
+}
+
+message Circle {
+  required Point center = 1;
+  required float radius = 2;
+}
+
+message Polygon {
+  repeated Point point = 1;
+}
+
+message Spline {
+  repeated Point point = 1;
+}
+
+message Text {
+  optional Point point = 1;
+  required string text = 2;
+}
+
+message Shape {
+  optional Line line = 1;
+  optional Rectangle rectangle = 2;
+  optional Circle circle = 3;
+  optional Polygon polygon = 4;
+  optional Spline spline = 9;
+  optional Text text = 8;
+
+  optional Style style = 5;
+  optional int32 text_offset = 6;
+  optional int32 text_length = 7;
+}
+
+message Graphic {
+  repeated Shape shape = 1;
+  optional float width = 2;
+  optional float height = 3;
+}
+
+// Structure of a chart.
+
+message Action {
+  required string action = 1;
+  required int32 width = 3;
+  optional int32 repetitions = 2 [default = 1];
+
+  optional int32 text_offset = 4;
+  optional int32 text_length = 5;
+}
+
+message Row {
+  repeated Action action = 1;
+}
+
+message ActionType {
+  required string name = 1;
+  optional int32 width = 2 [default = 1];
+  optional Graphic graphic = 4;
+}
+
+message Library {
+  repeated ActionType action_type = 1;
+}
+
+message Chart {
+  repeated Row row = 1;
+  optional Library library = 2;
+}
+
+// Storage formats.
+
+message ChartFile {
+  optional Library library = 2;
+  optional string text = 4;
+}
+
