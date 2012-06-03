@@ -94,11 +94,10 @@
 
     PatternEditView.prototype.save = function() {
       var _this = this;
-      this.model.set({
+      this.model.save({
         title: this.$('[name=title]').val(),
         text: this.$('[name=text]').val()
-      });
-      this.model.save({
+      }, {
         success: function() {
           new NotificationView({
             message: "Saved!"
