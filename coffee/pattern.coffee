@@ -1,7 +1,8 @@
 
-Pattern = Parse.Object.extend "Pattern"
+class Pattern extends Parse.Object
+  className: "Pattern"
 
-NotificationView = Parse.View.extend(
+class NotificationView extends Parse.View
   className: "success"
 
   initialize: ->
@@ -18,13 +19,11 @@ NotificationView = Parse.View.extend(
       $.doTimeout 2000, =>
         $(@el).remove()
     @
-)
 
-ErrorView = NotificationView.extend(
+class ErrorView extends NotificationView
   className: "error"
-)
 
-PatternEditView = Parse.View.extend(
+class PatternEditView extends Parse.View
   events:
     "submit form": "save"
 
@@ -54,9 +53,8 @@ PatternEditView = Parse.View.extend(
     @$("[name=title]").val(@model.get("title"))
     @$("[name=text]").val(@model.get("text"))
     @delegateEvents()
-)
 
-PatternListView = Parse.View.extend(
+class PatternListView extends Parse.View
   initialize: ->
     _.bindAll(@, "render")
     @render()
@@ -66,9 +64,8 @@ PatternListView = Parse.View.extend(
     $(@el).html(_.template(template)({ collection: @collection }))
     $("#app").html(@el)
     @delegateEvents()
-)
 
-Router = Backbone.Router.extend(
+class Router extends Backbone.Router
   routes:
     "": "listPatterns"
     "new" : "newPattern"
@@ -96,7 +93,6 @@ Router = Backbone.Router.extend(
         new PatternListView({ collection: patterns })
       error: (patterns, error) ->
         new Error({ message: "Unable to load patterns." })
-)
 
 App =
  init: ->
