@@ -80,7 +80,7 @@ class Router extends Backbone.Router
 
   listPatterns: =>
     query = new Parse.Query(Pattern)
-    query.descending("createdAt")
+    query.descending("updatedAt", "createdAt")
     query.limit(10)
     patterns = query.collection()
     patterns.fetch

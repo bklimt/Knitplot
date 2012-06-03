@@ -208,7 +208,7 @@
       var patterns, query,
         _this = this;
       query = new Parse.Query(Pattern);
-      query.descending("createdAt");
+      query.descending("updatedAt", "createdAt");
       query.limit(10);
       patterns = query.collection();
       return patterns.fetch({
