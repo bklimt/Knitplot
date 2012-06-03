@@ -16,12 +16,13 @@ WX_LIBS = `../lib/wx/bin/wx-config --libs`
 COMPILE = g++ $(DEBUG) -Wall -c -I.
 LINK = g++ $(DEBUG)
 
-all: ../bin/chart2svg ../bin/Knitplot.app
+all: ../bin/proto2json ../bin/chart2svg ../bin/Knitplot.app
 
 clean:
 	#
 	# Cleaning up binaries...
 	#
+	-rm ../bin/proto2json
 	-rm ../bin/chart2svg
 	-rm ../bin/knitplot
 	-rm -rf ../bin/Knitplot.app
@@ -146,6 +147,9 @@ INCLUDE_model_svg_h = model/svg.h \
 ../obj/chart2svg.o: cli/chart2svg.cc $(INCLUDE_model_chart_h) $(INCLUDE_model_svg.h)
 	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(GFLAGS_CFLAGS)
 
+../obj/proto2json.o: cli/proto2json.cc $(INCLUDE_storage_chart_pb_h)
+	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(GFLAGS_CFLAGS)
+
 # wx UI
 
 INCLUDE_gui_library_panel_h = gui/library_panel.h \
@@ -182,6 +186,14 @@ INCLUDE_gui_chart_panel_h = gui/chart_panel.h \
 
 ../obj/chart_panel.o: gui/chart_panel.cc $(INCLUDE_gui_chart_panel_h)
 	$(COMPILE) -o $@ $< $(PROTOBUF_CFLAGS) $(WX_CFLAGS)
+
+# proto2json
+
+../bin/proto2json: ../obj/proto2json.o ../obj/chart.pb.o
+	#
+	# Linking command line chart proto -> json converter...
+	#
+	$(LINK) -o $@ $^ $(PROTOBUF_LIBS) $(GFLAGS_LIBS)
 
 # chart2svg
 
