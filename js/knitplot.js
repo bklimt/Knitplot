@@ -93,6 +93,7 @@
     };
 
     PatternEditView.prototype.save = function() {
+      var _this = this;
       this.model.set({
         title: this.$('[name=title]').val(),
         text: this.$('[name=text]').val()
@@ -102,7 +103,7 @@
           new NotificationView({
             message: "Saved!"
           });
-          return Backbone.history.saveLocation("documents/" + this.model.id);
+          return Backbone.history.saveLocation("documents/" + _this.model.id);
         },
         error: function() {
           return new ErrorView({

@@ -31,17 +31,15 @@ class PatternEditView extends Parse.View
     @render()
 
   save: =>
-    @model.set(
+    @model.set
       title: @$('[name=title]').val()
       text: @$('[name=text]').val()
-    )
-    @model.save(
-      success: ->
+    @model.save
+      success: =>
         new NotificationView({ message: "Saved!" })
         Backbone.history.saveLocation("documents/#{@model.id}")
-      error: ->
+      error: =>
         new ErrorView({ message: "Unable to save." })
-    )
     false
 
   render: =>
