@@ -34,9 +34,13 @@
         <h3><a href="#new">Create New</a></h3>
         <ul>
           <% collection.each(function(item) { %>
-            <li><a href='#patterns/<%= item.id %>'><%= item.escape('title') %></a></li>
+            <li><a href="#pattern/<%= item.id %>"><%= item.escape('title') %></a></li>
           <% }); %>
         </ul>
+        <% if (start > 0) { %>
+          <a href="#patterns/<%= previous %>">Previous 10</a> |
+        <% } %>
+        <a href="#patterns/<%= next %>">Next 10</a>
       <% } %>
     </script>
 

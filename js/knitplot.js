@@ -141,6 +141,7 @@
     }
 
     PatternListView.prototype.initialize = function() {
+      this.start = this.options.start;
       return this.render();
     };
 
@@ -148,7 +149,10 @@
       var template;
       template = $("#pattern-list-template").html();
       $(this.el).html(_.template(template)({
-        collection: this.collection
+        collection: this.collection,
+        start: this.start,
+        previous: this.start - 10,
+        next: this.start + 10
       }));
       $("#app").html(this.el);
       return this.delegateEvents();
@@ -174,7 +178,8 @@
     Router.prototype.routes = {
       "": "listPatterns",
       "new": "newPattern",
-      "patterns/:id": "editPattern"
+      "pattern/:id": "editPattern",
+      "patterns/:start": "listPatterns"
     };
 
     Router.prototype.newPattern = function() {
@@ -204,17 +209,20 @@
       });
     };
 
-    Router.prototype.listPatterns = function() {
+    Router.prototype.listPatterns = function(start) {
       var patterns, query,
         _this = this;
+      if (start == null) {
+        start = 0;
+      }
       query = new Parse.Query(Pattern);
-      query.descending("updatedAt", "createdAt");
-      query.limit(10);
+      query.descending("updatedAt", "createdAt").skip(start).limit(10);
       patterns = query.collection();
       return patterns.fetch({
         success: function() {
           return new PatternListView({
-            collection: patterns
+            collection: patterns,
+            start: parseInt(start)
           });
         },
         error: function(patterns, error) {
