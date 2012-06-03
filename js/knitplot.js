@@ -2,7 +2,8 @@
 (function() {
   var App, ErrorView, NotificationView, Pattern, PatternEditView, PatternListView, Router,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Pattern = (function(_super) {
 
@@ -23,13 +24,15 @@
     __extends(NotificationView, _super);
 
     function NotificationView() {
+      this.render = __bind(this.render, this);
+
+      this.initialize = __bind(this.initialize, this);
       return NotificationView.__super__.constructor.apply(this, arguments);
     }
 
     NotificationView.prototype.className = "success";
 
     NotificationView.prototype.initialize = function() {
-      _.bindAll(this, "render");
       return this.render();
     };
 
@@ -46,7 +49,7 @@
           return $(_this.el).remove();
         });
       });
-      return this;
+      return this.delegateEvents();
     };
 
     return NotificationView;
@@ -72,6 +75,11 @@
     __extends(PatternEditView, _super);
 
     function PatternEditView() {
+      this.render = __bind(this.render, this);
+
+      this.save = __bind(this.save, this);
+
+      this.initialize = __bind(this.initialize, this);
       return PatternEditView.__super__.constructor.apply(this, arguments);
     }
 
@@ -80,7 +88,6 @@
     };
 
     PatternEditView.prototype.initialize = function() {
-      _.bindAll(this, "render");
       this.model.bind("change", this.render);
       return this.render();
     };
@@ -127,11 +134,13 @@
     __extends(PatternListView, _super);
 
     function PatternListView() {
+      this.render = __bind(this.render, this);
+
+      this.initialize = __bind(this.initialize, this);
       return PatternListView.__super__.constructor.apply(this, arguments);
     }
 
     PatternListView.prototype.initialize = function() {
-      _.bindAll(this, "render");
       return this.render();
     };
 
@@ -154,6 +163,11 @@
     __extends(Router, _super);
 
     function Router() {
+      this.listPatterns = __bind(this.listPatterns, this);
+
+      this.editPattern = __bind(this.editPattern, this);
+
+      this.newPattern = __bind(this.newPattern, this);
       return Router.__super__.constructor.apply(this, arguments);
     }
 
@@ -170,7 +184,8 @@
     };
 
     Router.prototype.editPattern = function(id) {
-      var pattern;
+      var pattern,
+        _this = this;
       pattern = new Pattern({
         objectId: id
       });
@@ -190,7 +205,8 @@
     };
 
     Router.prototype.listPatterns = function() {
-      var patterns, query;
+      var patterns, query,
+        _this = this;
       query = new Parse.Query(Pattern);
       query.descending("createdAt");
       query.limit(10);

@@ -5,11 +5,10 @@ class Pattern extends Parse.Object
 class NotificationView extends Parse.View
   className: "success"
 
-  initialize: ->
-    _.bindAll(@, "render")
+  initialize: =>
     @render()
 
-  render: ->
+  render: =>
     $(@el).html(@options.message ? "Success!")
     $(@el).hide()
     $("#notification").html(@el)
@@ -18,7 +17,7 @@ class NotificationView extends Parse.View
       $(@el).slideUp()
       $.doTimeout 2000, =>
         $(@el).remove()
-    @
+    @delegateEvents()
 
 class ErrorView extends NotificationView
   className: "error"
@@ -27,12 +26,11 @@ class PatternEditView extends Parse.View
   events:
     "submit form": "save"
 
-  initialize: ->
-    _.bindAll(@, "render")
+  initialize: =>
     @model.bind("change", @render)
     @render()
 
-  save: ->
+  save: =>
     @model.set(
       title: @$('[name=title]').val()
       text: @$('[name=text]').val()
@@ -46,7 +44,7 @@ class PatternEditView extends Parse.View
     )
     false
 
-  render: ->
+  render: =>
     template = $("#pattern-template").html()
     $(@el).html(_.template(template)({ model: @model }))
     $("#app").html(@el)
@@ -55,11 +53,10 @@ class PatternEditView extends Parse.View
     @delegateEvents()
 
 class PatternListView extends Parse.View
-  initialize: ->
-    _.bindAll(@, "render")
+  initialize: =>
     @render()
 
-  render: ->
+  render: =>
     template = $("#pattern-list-template").html()
     $(@el).html(_.template(template)({ collection: @collection }))
     $("#app").html(@el)
@@ -71,25 +68,25 @@ class Router extends Backbone.Router
     "new" : "newPattern"
     "patterns/:id": "editPattern"
   
-  newPattern: ->
+  newPattern: =>
     new PatternEditView(model: new Pattern())
 
-  editPattern: (id) ->
+  editPattern: (id) =>
     pattern = new Pattern({ objectId: id })
     pattern.fetch
-      success: ->
+      success: =>
         new PatternEditView(model: pattern)
       error: (pattern, error) ->
         new Error({ message: "Count not find the pattern." })
         window.location.hash = "#"
 
-  listPatterns: ->
+  listPatterns: =>
     query = new Parse.Query(Pattern)
     query.descending("createdAt")
     query.limit(10)
     patterns = query.collection()
     patterns.fetch
-      success: ->
+      success: =>
         new PatternListView({ collection: patterns })
       error: (patterns, error) ->
         new Error({ message: "Unable to load patterns." })
