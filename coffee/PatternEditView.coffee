@@ -2,6 +2,7 @@
 class PatternEditView extends Parse.View
   events:
     "submit form": "save"
+    "keypress textarea": "update"
 
   initialize: =>
     @model.bind("change", @render)
@@ -14,10 +15,19 @@ class PatternEditView extends Parse.View
     ,
       success: =>
         new NotificationView({ message: "Saved!" })
-        Backbone.history.navigate("documents/#{@model.id}")
+        Backbone.history.navigate("pattern/#{@model.id}")
       error: =>
         new ErrorView({ message: "Unable to save." })
     false
+
+  update: =>
+    text = @$('[name=text]').val()
+    library =
+      p: { width: 1 }
+      k3tog: { width: 3 }
+    parser = new ChartParser()
+    chart = parser.parse(text, library)
+    console.warn(chart)
 
   render: =>
     template = $("#pattern-template").html()
