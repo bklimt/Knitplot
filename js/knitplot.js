@@ -682,10 +682,9 @@
 
     }
 
-    ChartParser.prototype.parse = function(text, library) {
+    ChartParser.prototype.parse = function(text) {
       var chart;
       this.text = text;
-      this.library = library;
       this.line = 0;
       this.lineStart = 0;
       this.tokenLength = 1;
@@ -749,8 +748,8 @@
       if (number) {
         action.repetitions = number;
       }
-      if (this.library[text]) {
-        action = _.extend({}, this.library[text], action);
+      if (Library[text]) {
+        action = _.extend({}, Library[text], action);
       } else {
         this._addMessage(this.errors, "Unknown action type: \"" + text + "\".");
         action.action = "error";
@@ -914,6 +913,7 @@
     };
 
     PatternEditView.prototype.initialize = function() {
+      this.parser = new ChartParser();
       this.model.bind("change", this.render);
       return this.render();
     };
@@ -940,18 +940,9 @@
     };
 
     PatternEditView.prototype.update = function() {
-      var chart, library, parser, text;
+      var chart, text;
       text = this.$('[name=text]').val();
-      library = {
-        p: {
-          width: 1
-        },
-        k3tog: {
-          width: 3
-        }
-      };
-      parser = new ChartParser();
-      chart = parser.parse(text, library);
+      chart = this.parser.parse(text);
       return console.warn(chart);
     };
 

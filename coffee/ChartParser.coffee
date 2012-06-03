@@ -1,8 +1,7 @@
 
 class ChartParser
-  parse: (text, library) =>
+  parse: (text) =>
     @text = text
-    @library = library
     @line = 0
     @lineStart = 0
     @tokenLength = 1
@@ -57,8 +56,8 @@ class ChartParser
     action.action = text
     action.repetitions = number if number
     
-    if @library[text]
-      action = _.extend({}, @library[text], action)
+    if Library[text]
+      action = _.extend({}, Library[text], action)
     else
       @_addMessage(@errors, "Unknown action type: \"#{text}\".")
       action.action = "error"

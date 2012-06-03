@@ -5,6 +5,7 @@ class PatternEditView extends Parse.View
     "keypress textarea": "update"
 
   initialize: =>
+    @parser = new ChartParser()
     @model.bind("change", @render)
     @render()
 
@@ -22,11 +23,7 @@ class PatternEditView extends Parse.View
 
   update: =>
     text = @$('[name=text]').val()
-    library =
-      p: { width: 1 }
-      k3tog: { width: 3 }
-    parser = new ChartParser()
-    chart = parser.parse(text, library)
+    chart = @parser.parse(text)
     console.warn(chart)
 
   render: =>
