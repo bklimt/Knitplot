@@ -14,7 +14,7 @@ class PatternEditView extends Parse.View
     ,
       success: =>
         new NotificationView({ message: "Saved!" })
-        Backbone.history.saveLocation("documents/#{@model.id}")
+        Backbone.history.navigate("documents/#{@model.id}")
       error: =>
         new ErrorView({ message: "Unable to save." })
     false

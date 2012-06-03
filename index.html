@@ -28,19 +28,24 @@
     </script>
 
     <script type="text/template" id="pattern-list-template">
-      <% if (collection.models.length === 0) { %>
+      <% if (collection.length === 0) { %>
         <h3>No documents! <a href="#new">Create one</a></h3>
       <% } else { %>
         <h3><a href="#new">Create New</a></h3>
         <ul>
-          <% collection.each(function(item) { %>
+          <% _.each(collection, function(item) { %>
             <li><a href="#pattern/<%= item.id %>"><%= item.escape('title') %></a></li>
           <% }); %>
         </ul>
         <% if (start > 0) { %>
-          <a href="#patterns/<%= previous %>">Previous 10</a> |
+          <a href="#patterns/<%= previous %>">Previous</a>
         <% } %>
-        <a href="#patterns/<%= next %>">Next 10</a>
+        <% if (start > 0 && next > 0) { %>
+          |
+        <% } %>
+        <% if (next > 0) { %>
+          <a href="#patterns/<%= next %>">Next</a>
+        <% } %>
       <% } %>
     </script>
 

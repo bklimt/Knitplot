@@ -102,7 +102,7 @@
           new NotificationView({
             message: "Saved!"
           });
-          return Backbone.history.saveLocation("documents/" + _this.model.id);
+          return Backbone.history.navigate("documents/" + _this.model.id);
         },
         error: function() {
           return new ErrorView({
@@ -149,10 +149,10 @@
       var template;
       template = $("#pattern-list-template").html();
       $(this.el).html(_.template(template)({
-        collection: this.collection,
+        collection: this.collection.first(10),
         start: this.start,
         previous: this.start - 10,
-        next: this.start + 10
+        next: this.collection.size() > 10 ? this.start + 10 : 0
       }));
       $("#app").html(this.el);
       return this.delegateEvents();
@@ -216,7 +216,7 @@
         start = 0;
       }
       query = new Parse.Query(Pattern);
-      query.descending("updatedAt", "createdAt").skip(start).limit(10);
+      query.descending("updatedAt", "createdAt").skip(start).limit(11);
       patterns = query.collection();
       return patterns.fetch({
         success: function() {
