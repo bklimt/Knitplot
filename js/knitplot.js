@@ -940,14 +940,15 @@
     };
 
     PatternEditView.prototype.update = function() {
-      var chart, text;
+      var chart, circle, text;
       text = this.$('[name=text]').val();
       chart = this.parser.parse(text);
-      return console.warn(chart);
+      circle = this.canvas.circle(0, 0, 40);
+      return circle.attr("fill", "#ff0000");
     };
 
     PatternEditView.prototype.render = function() {
-      var template;
+      var div, template;
       template = $("#pattern-template").html();
       $(this.el).html(_.template(template)({
         model: this.model
@@ -955,6 +956,8 @@
       $("#app").html(this.el);
       this.$("[name=title]").val(this.model.get("title"));
       this.$("[name=text]").val(this.model.get("text"));
+      div = this.$('[name=chart]');
+      this.canvas = new Raphael(div.get(0));
       return this.delegateEvents();
     };
 

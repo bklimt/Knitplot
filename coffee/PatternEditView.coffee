@@ -24,7 +24,8 @@ class PatternEditView extends Parse.View
   update: =>
     text = @$('[name=text]').val()
     chart = @parser.parse(text)
-    console.warn(chart)
+    circle = @canvas.circle(0, 0, 40)
+    circle.attr("fill", "#ff0000")
 
   render: =>
     template = $("#pattern-template").html()
@@ -32,5 +33,7 @@ class PatternEditView extends Parse.View
     $("#app").html(@el)
     @$("[name=title]").val(@model.get("title"))
     @$("[name=text]").val(@model.get("text"))
+    div = @$('[name=chart]')
+    @canvas = new Raphael(div.get(0))
     @delegateEvents()
 
