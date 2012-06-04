@@ -54,14 +54,14 @@ class ChartParser
     # Try to strip a number off the end.
     [match, text, number] = /^(.*[^0-9])([0-9]*)$/.exec text
     action.action = text
-    action.repetitions = number if number
+    action.repetitions = parseInt(number) if number
     
+    defaults = { width: 1, repetitions: 1 }
     if Library[text]
-      action = _.extend({}, Library[text], action)
+      action = _.extend(defaults, Library[text], action)
     else
       @_addMessage(@errors, "Unknown action type: \"#{text}\".")
-      action.action = "error"
-      action.width = 1
+      action = _.extend(defaults, Library.error, action, { action: "error" })
     return action
 
   _parseRow: =>
