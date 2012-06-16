@@ -945,7 +945,8 @@
         line: {
           point1: [shape.line.point1[0] * width + x, shape.line.point1[1] * height + y],
           point2: [shape.line.point2[0] * width + x, shape.line.point2[1] * height + y]
-        }
+        },
+        style: shape.style
       };
     } else if (shape.rectangle) {
       return {
@@ -953,14 +954,16 @@
           topLeft: [shape.rectangle.topLeft[0] * width + x, shape.rectangle.topLeft[1] * height + y],
           width: shape.rectangle.width * width,
           height: shape.rectangle.height * height
-        }
+        },
+        style: shape.style
       };
     } else if (shape.circle) {
       return {
         circle: {
           center: [shape.circle.center[0] * width + x, shape.circle.center[1] * height + y],
           radius: Math.min(shape.circle.radius * width, shape.circle.radius * height)
-        }
+        },
+        style: shape.style
       };
     } else {
       return console.warn(shape);
@@ -1006,14 +1009,13 @@
           _ref1 = action.graphic;
           for (_n = 0, _len4 = _ref1.length; _n < _len4; _n++) {
             shape = _ref1[_n];
-            newShape = _.clone(shape);
-            newShape.textOffset = action.textOffset;
-            newShape.textLength = action.textLength;
             newShapeX = (columns - (column + action.width)) * columnWidth;
             newShapeY = (rows - (rowIndex + 1)) * rowHeight;
             newShapeWidth = action.width * columnWidth;
             newShapeHeight = rowHeight;
-            newShape = scaleAndTranslate(newShape, newShapeX, newShapeY, newShapeWidth, newShapeHeight);
+            newShape = scaleAndTranslate(shape, newShapeX, newShapeY, newShapeWidth, newShapeHeight);
+            newShape.textOffset = action.textOffset;
+            newShape.textLength = action.textLength;
             graphic.shapes.push(newShape);
           }
           column = column + action.width;

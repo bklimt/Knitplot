@@ -44,6 +44,7 @@ scaleAndTranslate = (shape, x, y, width, height) ->
         shape.line.point2[0] * width + x,
         shape.line.point2[1] * height + y
       ]
+    style: shape.style
   else if shape.rectangle
     rectangle:
       topLeft: [
@@ -52,6 +53,7 @@ scaleAndTranslate = (shape, x, y, width, height) ->
       ]
       width: shape.rectangle.width * width
       height: shape.rectangle.height * height
+    style: shape.style
   else if shape.circle
     circle:
       center: [
@@ -60,6 +62,7 @@ scaleAndTranslate = (shape, x, y, width, height) ->
       ]
       radius: Math.min(shape.circle.radius * width,
                        shape.circle.radius * height)
+    style: shape.style
   else
     console.warn(shape)
 
@@ -92,16 +95,15 @@ makeGraphic = (chart, maxWidth, maxHeight) ->
     for action in row
       for rep in [1 .. action.repetitions]
         for shape in action.graphic
-          newShape = _.clone(shape)
-          newShape.textOffset = action.textOffset
-          newShape.textLength = action.textLength
           newShapeX = (columns - (column + action.width)) * columnWidth
           newShapeY = (rows - (rowIndex + 1)) * rowHeight
           newShapeWidth = action.width * columnWidth
           newShapeHeight = rowHeight
-          newShape = scaleAndTranslate(newShape,
+          newShape = scaleAndTranslate(shape,
                                        newShapeX, newShapeY,
                                        newShapeWidth, newShapeHeight)
+          newShape.textOffset = action.textOffset
+          newShape.textLength = action.textLength
           graphic.shapes.push(newShape)
         column = column + action.width
 
