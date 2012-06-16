@@ -128,4 +128,3 @@ class ChartParser
         ++@offset
     return chart
 
-window.ChartParser = ChartParser

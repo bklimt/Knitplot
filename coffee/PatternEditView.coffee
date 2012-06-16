@@ -1,4 +1,8 @@
 
+#
+# Shape drawing functions
+#
+
 drawLine = (canvas, shape) ->
   line = canvas.path(
     "M#{shape.line.point1[0]},#{shape.line.point1[1]}" +
@@ -18,6 +22,15 @@ drawCircle = (canvas, shape) ->
                          shape.circle.radius)
   circle.attr(shape.style)
 
+drawPolygon = (canvas, shape) ->
+  path =
+    "M#{shape.polygon[0][0]},#{shape.polygon[0][1]}" +
+    _.map(shape.polygon[1...], (point) ->
+      "L#{point[0]},#{point[1]}").join("")
+  polygon = canvas.path(path)
+  console.warn(path)
+  polygon.attr(shape.style)
+
 drawShape = (canvas, shape) ->
   if shape.line
     drawLine(canvas, shape)
@@ -25,6 +38,8 @@ drawShape = (canvas, shape) ->
     drawRectangle(canvas, shape)
   else if shape.circle
     drawCircle(canvas, shape)
+  else if shape.polygon
+    drawPolygon(canvas, shape)
   else
     console.warn(shape)
 
@@ -33,38 +48,38 @@ drawGraphic = (canvas, graphic) ->
   for shape in graphic.shapes
     drawShape(canvas, shape)
 
+#
+# Shape construction functions
+#
+
+scaleAndTranslatePoint = (point, x, y, width, height) ->
+  [point[0] * width + x, point[1] * height + y]
+
 scaleAndTranslate = (shape, x, y, width, height) ->
   if shape.line
     line:
-      point1: [
-        shape.line.point1[0] * width + x,
-        shape.line.point1[1] * height + y
-      ]
-      point2: [
-        shape.line.point2[0] * width + x,
-        shape.line.point2[1] * height + y
-      ]
+      point1: scaleAndTranslatePoint(shape.line.point1)
+      point2: scaleAndTranslatePoint(shape.line.point2)
     style: shape.style
   else if shape.rectangle
     rectangle:
-      topLeft: [
-        shape.rectangle.topLeft[0] * width + x,
-        shape.rectangle.topLeft[1] * height + y
-      ]
+      topLeft: scaleAndTranslatePoint(shape.rectangle.topLeft)
       width: shape.rectangle.width * width
       height: shape.rectangle.height * height
     style: shape.style
   else if shape.circle
     circle:
-      center: [
-        shape.circle.center[0] * width + x,
-        shape.circle.center[1] * height + y
-      ]
+      center: scaleAndTranslatePoint(shape.circle.center)
       radius: Math.min(shape.circle.radius * width,
                        shape.circle.radius * height)
     style: shape.style
+  else if shape.polygon
+    polygon: _.map(shape.polygon, (point) =>
+       scaleAndTranslatePoint(point, x, y, width, height))
+    style: shape.style
   else
     console.warn(shape)
+    {}
 
 makeGraphic = (chart, maxWidth, maxHeight) ->
   # Figure out how many columns there are.
@@ -108,6 +123,10 @@ makeGraphic = (chart, maxWidth, maxHeight) ->
         column = column + action.width
 
   return graphic
+
+#
+# The actual View object
+#
 
 class PatternEditView extends Parse.View
   events:
