@@ -12,19 +12,30 @@ drawRectangle = (canvas, shape) ->
                      shape.rectangle.height)
   rect.attr(shape.style)
 
+drawCircle = (canvas, shape) ->
+  circle = canvas.circle(shape.circle.center[0],
+                         shape.circle.center[1],
+                         shape.circle.radius)
+  circle.attr(shape.style)
+
 drawShape = (canvas, shape) ->
   if shape.line
     drawLine(canvas, shape)
-  if shape.rectangle
+  else if shape.rectangle
     drawRectangle(canvas, shape)
+  else if shape.circle
+    drawCircle(canvas, shape)
+  else
+    console.warn(shape)
 
 drawGraphic = (canvas, graphic) ->
+  canvas.clear()
   for shape in graphic.shapes
     drawShape(canvas, shape)
 
 scaleAndTranslate = (shape, x, y, width, height) ->
   if shape.line
-    shape.line =
+    line:
       point1: [
         shape.line.point1[0] * width + x,
         shape.line.point1[1] * height + y
@@ -33,14 +44,24 @@ scaleAndTranslate = (shape, x, y, width, height) ->
         shape.line.point2[0] * width + x,
         shape.line.point2[1] * height + y
       ]
-  if shape.rectangle
-    shape.rectangle =
+  else if shape.rectangle
+    rectangle:
       topLeft: [
         shape.rectangle.topLeft[0] * width + x,
         shape.rectangle.topLeft[1] * height + y
       ]
       width: shape.rectangle.width * width
       height: shape.rectangle.height * height
+  else if shape.circle
+    circle:
+      center: [
+        shape.circle.center[0] * width + x,
+        shape.circle.center[1] * height + y
+      ]
+      radius: Math.min(shape.circle.radius * width,
+                       shape.circle.radius * height)
+  else
+    console.warn(shape)
 
 makeGraphic = (chart, maxWidth, maxHeight) ->
   # Figure out how many columns there are.
@@ -78,9 +99,9 @@ makeGraphic = (chart, maxWidth, maxHeight) ->
           newShapeY = (rows - (rowIndex + 1)) * rowHeight
           newShapeWidth = action.width * columnWidth
           newShapeHeight = rowHeight
-          scaleAndTranslate(newShape,
-                            newShapeX, newShapeY,
-                            newShapeWidth, newShapeHeight)
+          newShape = scaleAndTranslate(newShape,
+                                       newShapeX, newShapeY,
+                                       newShapeWidth, newShapeHeight)
           graphic.shapes.push(newShape)
         column = column + action.width
 
