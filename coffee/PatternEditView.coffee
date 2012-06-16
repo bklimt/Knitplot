@@ -7,7 +7,6 @@ drawLine = (canvas, shape) ->
   path =
     "M#{shape.line.point1[0]},#{shape.line.point1[1]}" +
     "L#{shape.line.point2[0]},#{shape.line.point2[1]}"
-  console.warn(path)
   line = canvas.path(path)
   line.attr(shape.style)
 
@@ -28,30 +27,20 @@ drawPolygon = (canvas, shape) ->
   path =
     "M#{shape.polygon[0][0]},#{shape.polygon[0][1]}" +
     ("L#{point[0]},#{point[1]}" for point in shape.polygon[1...]).join("")
-  console.warn(path)
   polygon = canvas.path(path)
   polygon.attr(shape.style)
 
 drawSpline = (canvas, shape) ->
-  thisX = shape.spline[0][0]
-  thisY = shape.spline[0][1]
-  nextX = shape.spline[1][0]
-  nextY = shape.spline[1][1]
-  cX = (thisX + nextX) / 2
-  cY = (thisY + nextY) / 2
-
-  path = "M#{thisX},#{thisY}L#{cX},#{cY}"
+  current = shape.spline[0]
+  next = shape.spline[1]
+  c = [ (current[0] + next[0]) / 2, (current[1] + next[1]) / 2 ]
+  path = "M#{current[0]},#{current[1]}L#{c[0]},#{c[1]}"
   _.each shape.spline[2...], (point) ->
-    thisX = nextX
-    thisY = nextY
-    nextX = point[0]
-    nextY = point[1]
-    cX = (thisX + nextX) / 2
-    cY = (thisY + nextY) / 2
-    path = "#{path} Q#{thisX},#{thisY} #{cX},#{cY}"
-  path = "#{path} L#{nextX},#{nextY}"
-
-  console.warn(path)
+    current = next
+    next = point
+    c = [ (current[0] + next[0]) / 2, (current[1] + next[1]) / 2 ]
+    path = "#{path} Q#{current[0]},#{current[1]} #{c[0]},#{c[1]}"
+  path = "#{path} L#{next[0]},#{next[1]}"
   spline = canvas.path(path)
   spline.attr(shape.style)
 

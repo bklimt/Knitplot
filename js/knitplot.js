@@ -914,7 +914,6 @@
   drawLine = function(canvas, shape) {
     var line, path;
     path = ("M" + shape.line.point1[0] + "," + shape.line.point1[1]) + ("L" + shape.line.point2[0] + "," + shape.line.point2[1]);
-    console.warn(path);
     line = canvas.path(path);
     return line.attr(shape.style);
   };
@@ -943,31 +942,23 @@
       }
       return _results;
     })()).join("");
-    console.warn(path);
     polygon = canvas.path(path);
     return polygon.attr(shape.style);
   };
 
   drawSpline = function(canvas, shape) {
-    var cX, cY, nextX, nextY, path, spline, thisX, thisY;
-    thisX = shape.spline[0][0];
-    thisY = shape.spline[0][1];
-    nextX = shape.spline[1][0];
-    nextY = shape.spline[1][1];
-    cX = (thisX + nextX) / 2;
-    cY = (thisY + nextY) / 2;
-    path = "M" + thisX + "," + thisY + "L" + cX + "," + cY;
+    var c, current, next, path, spline;
+    current = shape.spline[0];
+    next = shape.spline[1];
+    c = [(current[0] + next[0]) / 2, (current[1] + next[1]) / 2];
+    path = "M" + current[0] + "," + current[1] + "L" + c[0] + "," + c[1];
     _.each(shape.spline.slice(2), function(point) {
-      thisX = nextX;
-      thisY = nextY;
-      nextX = point[0];
-      nextY = point[1];
-      cX = (thisX + nextX) / 2;
-      cY = (thisY + nextY) / 2;
-      return path = "" + path + " Q" + thisX + "," + thisY + " " + cX + "," + cY;
+      current = next;
+      next = point;
+      c = [(current[0] + next[0]) / 2, (current[1] + next[1]) / 2];
+      return path = "" + path + " Q" + current[0] + "," + current[1] + " " + c[0] + "," + c[1];
     });
-    path = "" + path + " L" + nextX + "," + nextY;
-    console.warn(path);
+    path = "" + path + " L" + next[0] + "," + next[1];
     spline = canvas.path(path);
     return spline.attr(shape.style);
   };
