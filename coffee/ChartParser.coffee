@@ -44,7 +44,7 @@ class ChartParser
         @_addMessage(@warnings, "Missing action.")
         return null
 
-    text = @text[start .. (start + @tokenLength - 1)]
+    text = @text[start ... (start + @tokenLength)]
     action =
       action: text
       width: 1
@@ -57,9 +57,21 @@ class ChartParser
     action.repetitions = parseInt(number) if number
     
     defaults = { width: 1, repetitions: 1 }
+    found = false
     if Library[text]
       action = _.extend(defaults, Library[text], action)
+      found = true
     else
+      # Maybe this is like t2r -> t#r.
+      [match, prefix, number, suffix] = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec text
+      if match
+        altText = "#{prefix}##{suffix}"
+        if match and Library[altText]
+          action = _.extend(defaults, Library[altText], action)
+          action.action = altText
+          action.width = action.width * parseInt(number)
+          found = true
+    if not found
       @_addMessage(@errors, "Unknown action type: \"#{text}\".")
       action = _.extend(defaults, Library.error, action, { action: "error" })
     return action
@@ -84,7 +96,7 @@ class ChartParser
         until (not @text[@offset]) or /[, \t\r\n]/.test @text[@offset]
           ++@offset
           ++@tokenLength
-        token = @text[start .. (start + @tokenLength - 1)]
+        token = @text[start ... (start + @tokenLength)]
         @_addMessage(@errors, "Stray text: \"#{token}\".")
     return row
 
@@ -116,3 +128,4 @@ class ChartParser
         ++@offset
     return chart
 
+window.ChartParser = ChartParser

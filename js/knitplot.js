@@ -720,7 +720,7 @@
     };
 
     ChartParser.prototype._parseAction = function() {
-      var action, defaults, match, number, start, text, _ref;
+      var action, altText, defaults, found, match, number, prefix, start, suffix, text, _ref, _ref1;
       this._eatWhitespace();
       start = this.offset;
       this.tokenLength = 0;
@@ -736,7 +736,7 @@
           return null;
         }
       }
-      text = this.text.slice(start, (start + this.tokenLength - 1) + 1 || 9e9);
+      text = this.text.slice(start, start + this.tokenLength);
       action = {
         action: text,
         width: 1,
@@ -752,9 +752,23 @@
         width: 1,
         repetitions: 1
       };
+      found = false;
       if (Library[text]) {
         action = _.extend(defaults, Library[text], action);
+        found = true;
       } else {
+        _ref1 = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec(text), match = _ref1[0], prefix = _ref1[1], number = _ref1[2], suffix = _ref1[3];
+        if (match) {
+          altText = "" + prefix + "#" + suffix;
+          if (match && Library[altText]) {
+            action = _.extend(defaults, Library[altText], action);
+            action.action = altText;
+            action.width = action.width * parseInt(number);
+            found = true;
+          }
+        }
+      }
+      if (!found) {
         this._addMessage(this.errors, "Unknown action type: \"" + text + "\".");
         action = _.extend(defaults, Library.error, action, {
           action: "error"
@@ -789,7 +803,7 @@
             ++this.offset;
             ++this.tokenLength;
           }
-          token = this.text.slice(start, (start + this.tokenLength - 1) + 1 || 9e9);
+          token = this.text.slice(start, start + this.tokenLength);
           this._addMessage(this.errors, "Stray text: \"" + token + "\".");
         }
       }
@@ -831,6 +845,8 @@
     return ChartParser;
 
   })();
+
+  window.ChartParser = ChartParser;
 
   Pattern = (function(_super) {
 
