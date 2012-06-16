@@ -4,9 +4,11 @@
 #
 
 drawLine = (canvas, shape) ->
-  line = canvas.path(
+  path =
     "M#{shape.line.point1[0]},#{shape.line.point1[1]}" +
-    "L#{shape.line.point2[0]},#{shape.line.point2[1]}")
+    "L#{shape.line.point2[0]},#{shape.line.point2[1]}"
+  console.warn(path)
+  line = canvas.path(path)
   line.attr(shape.style)
 
 drawRectangle = (canvas, shape) ->
@@ -25,11 +27,33 @@ drawCircle = (canvas, shape) ->
 drawPolygon = (canvas, shape) ->
   path =
     "M#{shape.polygon[0][0]},#{shape.polygon[0][1]}" +
-    _.map(shape.polygon[1...], (point) ->
-      "L#{point[0]},#{point[1]}").join("")
-  polygon = canvas.path(path)
+    ("L#{point[0]},#{point[1]}" for point in shape.polygon[1...]).join("")
   console.warn(path)
+  polygon = canvas.path(path)
   polygon.attr(shape.style)
+
+drawSpline = (canvas, shape) ->
+  thisX = shape.spline[0][0]
+  thisY = shape.spline[0][1]
+  nextX = shape.spline[1][0]
+  nextY = shape.spline[1][1]
+  cX = (thisX + nextX) / 2
+  cY = (thisY + nextY) / 2
+
+  path = "M#{thisX},#{thisY}L#{cX},#{cY}"
+  _.each shape.spline[2...], (point) ->
+    thisX = nextX
+    thisY = nextY
+    nextX = point[0]
+    nextY = point[1]
+    cX = (thisX + nextX) / 2
+    cY = (thisY + nextY) / 2
+    path = "#{path} Q#{thisX},#{thisY} #{cX},#{cY}"
+  path = "#{path} L#{nextX},#{nextY}"
+
+  console.warn(path)
+  spline = canvas.path(path)
+  spline.attr(shape.style)
 
 drawShape = (canvas, shape) ->
   if shape.line
@@ -40,6 +64,8 @@ drawShape = (canvas, shape) ->
     drawCircle(canvas, shape)
   else if shape.polygon
     drawPolygon(canvas, shape)
+  else if shape.spline
+    drawSpline(canvas, shape)
   else
     console.warn(shape)
 
@@ -58,24 +84,26 @@ scaleAndTranslatePoint = (point, x, y, width, height) ->
 scaleAndTranslate = (shape, x, y, width, height) ->
   if shape.line
     line:
-      point1: scaleAndTranslatePoint(shape.line.point1)
-      point2: scaleAndTranslatePoint(shape.line.point2)
+      point1: scaleAndTranslatePoint(shape.line.point1, x, y, width, height)
+      point2: scaleAndTranslatePoint(shape.line.point2, x, y, width, height)
     style: shape.style
   else if shape.rectangle
     rectangle:
-      topLeft: scaleAndTranslatePoint(shape.rectangle.topLeft)
+      topLeft: scaleAndTranslatePoint(shape.rectangle.topLeft, x, y, width, height)
       width: shape.rectangle.width * width
       height: shape.rectangle.height * height
     style: shape.style
   else if shape.circle
     circle:
-      center: scaleAndTranslatePoint(shape.circle.center)
+      center: scaleAndTranslatePoint(shape.circle.center, x, y, width, height)
       radius: Math.min(shape.circle.radius * width,
                        shape.circle.radius * height)
     style: shape.style
   else if shape.polygon
-    polygon: _.map(shape.polygon, (point) =>
-       scaleAndTranslatePoint(point, x, y, width, height))
+    polygon: (scaleAndTranslatePoint(point, x, y, width, height) for point in shape.polygon)
+    style: shape.style
+  else if shape.spline
+    spline: (scaleAndTranslatePoint(point, x, y, width, height) for point in shape.spline)
     style: shape.style
   else
     console.warn(shape)
