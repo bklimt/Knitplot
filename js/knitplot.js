@@ -819,6 +819,7 @@
           }
           token = this.text.slice(start, start + this.tokenLength);
           this._addMessage(this.errors, "Stray text: \"" + token + "\".");
+          this._eatWhitespace();
         }
       }
       return row;
@@ -859,6 +860,8 @@
     return ChartParser;
 
   })();
+
+  window.ChartParser = ChartParser;
 
   drawLine = function(canvas, shape) {
     var line, path;
@@ -1133,7 +1136,7 @@
 
     PatternEditView.prototype.events = {
       "submit form": "save",
-      "keypress textarea": "update"
+      "keyup textarea": "update"
     };
 
     PatternEditView.prototype.initialize = function() {
@@ -1183,6 +1186,7 @@
       this.$("[name=text]").val(this.model.get("text"));
       div = this.$('[name=chart]');
       this.canvas = new Raphael(div.get(0));
+      this.update();
       return this.delegateEvents();
     };
 

@@ -6,7 +6,7 @@
 class PatternEditView extends Parse.View
   events:
     "submit form": "save"
-    "keypress textarea": "update"
+    "keyup textarea": "update"
 
   initialize: =>
     @parser = new ChartParser()
@@ -40,5 +40,6 @@ class PatternEditView extends Parse.View
     @$("[name=text]").val(@model.get("text"))
     div = @$('[name=chart]')
     @canvas = new Raphael(div.get(0))
+    @update()
     @delegateEvents()
 

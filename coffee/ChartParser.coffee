@@ -98,6 +98,7 @@ class ChartParser
           ++@tokenLength
         token = @text[start ... (start + @tokenLength)]
         @_addMessage(@errors, "Stray text: \"#{token}\".")
+        @_eatWhitespace()
     return row
 
   _parseChart: =>
@@ -128,3 +129,4 @@ class ChartParser
         ++@offset
     return chart
 
+window.ChartParser = ChartParser
