@@ -18,6 +18,13 @@ module.exports = function(grunt) {
         ],
         dest: 'js/knitplot.js'
       }
+    },
+
+    watch: {
+      knitplot: {
+        files: "<config:coffee.knitplot.files>",
+        tasks: "coffee:knitplot"
+      }
     }
   });
 
