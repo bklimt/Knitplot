@@ -1,14 +1,17 @@
 html {
-    text-align: center;
-    padding: 85px;
 }
 
 body {
     text-align: left;
     font-family: Helvetica;
-    margin: auto;
-    width: 500px;
     color: #555;
+}
+
+div {
+}
+
+table {
+    width: 100%;
 }
 
 h1 {
@@ -33,10 +36,6 @@ h2 {
 h3 {
     font-size: 15px;
     margin-bottom: 15px;
-}
-
-#app {
-    margin: 25px auto 25px auto;
 }
 
 ul {
@@ -82,10 +81,49 @@ button {
     padding: 5px 10px;
 }
 
+#topbar {
+    height: 80px;
+    width: 100%;
+    background-color: red;
+}
+
+#leftbar {
+    width: 150px;
+    height: 100%;
+    background-color: blue;
+}
+
+#rightbar {
+    width: 100px;
+    height: 200px;
+    background-color: yellow;
+}
+
+#main {
+    width: 100%;
+    background-color: green;
+}
+
+#app {
+    background-color: lightgreen;
+}
+
+#chart {
+  width: 49%;
+  height: 100%;
+  float: left;
+}
+
+#text {
+  width: 49%;
+  height: 100%
+  float: right;
+}
+
 #notification {
     height: 25px;
     font-size: 15px;
-    margin: 15px 0 15px 0;
+    background-color: orange;
 }
 
 #notification .success, #notification .error {

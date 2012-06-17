@@ -1171,7 +1171,7 @@
       text = this.$('[name=text]').val();
       parseResults = this.parser.parse(text);
       chart = parseResults.chart;
-      graphic = new Graphic(chart, 400, 400);
+      graphic = new Graphic(chart, this.canvas.width, this.canvas.height);
       return graphic.draw(this.canvas);
     };
 
@@ -1219,7 +1219,7 @@
         previous: this.start - 10,
         next: this.collection.size() > 10 ? this.start + 10 : 0
       }));
-      $("#app").html(this.el);
+      $("#leftbar").html(this.el);
       return this.delegateEvents();
     };
 
@@ -1241,13 +1241,14 @@
     }
 
     Router.prototype.routes = {
-      "": "listPatterns",
+      "": "newPattern",
       "new": "newPattern",
       "pattern/:id": "editPattern",
       "patterns/:start": "listPatterns"
     };
 
     Router.prototype.newPattern = function() {
+      this.listPatterns();
       return new PatternEditView({
         model: new Pattern()
       });
@@ -1256,6 +1257,7 @@
     Router.prototype.editPattern = function(id) {
       var pattern,
         _this = this;
+      this.listPatterns();
       pattern = new Pattern({
         objectId: id
       });
@@ -1267,7 +1269,7 @@
         },
         error: function(pattern, error) {
           new Error({
-            message: "Count not find the pattern."
+            message: "Could not find the pattern."
           });
           return window.location.hash = "#";
         }

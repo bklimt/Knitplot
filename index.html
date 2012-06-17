@@ -14,16 +14,34 @@
     <script src="js/knitplot.js"></script>
   </head>
   <body>
-    <h1><a href="#">KnitPlot</a></h1>
-    <h2>A tool for knitters.</h2>
-    <div id="notification"></div>
-    <div id="app"></div>
+    <div id="topbar">
+      <h1><a href="#">KnitPlot</a></h1>
+      <h2>A tool for knitters.</h2>
+    </div>
+    <tabLe>
+      <tbody>
+        <tr>
+          <td>
+            <div id="leftbar">Content</div>
+          </td>
+          <td style="width: 100%">
+            <div id="main">
+              <div id="notification"></div>
+              <div id="app"></div>
+            </div>
+          </td>
+          <td>
+            <div id="rightbar">Content</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     <script type="text/template" id="pattern-template">
       <form>
         <label for="title">Title</label><br/>
         <input id="title" name="title" type="text"></input><br/>
-        <div id="chart" name="chart" style="width: 400px; height: 300px; float: left"></div>
+        <div id="chart" name="chart"></div>
         <textarea id="text" name="text" rows=20 cols=40 style="float: right"></textarea>
         <div style="clear:both"/>
         <button><%= model.isNew() ? "Create" : "Save" %></button>

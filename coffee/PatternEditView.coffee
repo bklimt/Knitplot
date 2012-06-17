@@ -29,7 +29,7 @@ class PatternEditView extends Parse.View
     text = @$('[name=text]').val()
     parseResults = @parser.parse(text)
     chart = parseResults.chart
-    graphic = new Graphic(chart, 400, 400)
+    graphic = new Graphic(chart, @canvas.width, @canvas.height)
     graphic.draw(@canvas)
 
   render: =>
