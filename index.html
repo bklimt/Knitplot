@@ -37,7 +37,7 @@
       </tbody>
     </table>
 
-    <script type="text/template" id="pattern-template">
+    <script type="text/template" id="chart-template">
       <form>
         <label for="title">Title</label><br/>
         <input id="title" name="title" type="text"></input><br/>
@@ -46,33 +46,28 @@
         <div style="clear:both"/>
         <button><%= model.isNew() ? "Create" : "Save" %></button>
       </form>
-      <a href="#">Pattern List</a>
     </script>
 
-    <script type="text/template" id="pattern-list-template">
-      <% if (collection.length === 0) { %>
-        <h3>No documents! <a href="#new">Create one</a></h3>
-      <% } else { %>
-        <h3><a href="#new">Create New</a></h3>
-        <ul>
-          <% _.each(collection, function(item) { %>
-            <li><a href="#pattern/<%= item.id %>"><%= item.escape('title') %></a></li>
-          <% }); %>
-        </ul>
-        <% if (start > 0) { %>
-          <a href="#patterns/<%= previous %>">Previous</a>
-        <% } %>
-        <% if (start > 0 && next > 0) { %>
-          |
-        <% } %>
-        <% if (next > 0) { %>
-          <a href="#patterns/<%= next %>">Next</a>
-        <% } %>
+    <script type="text/template" id="chart-list-template">
+      <h3><a href="#new">Create New</a></h3>
+      <ul>
+        <% _.each(collection, function(item) { %>
+          <li><a href="#chart/<%= item.id %>"><%= item.escape('title') %></a></li>
+        <% }); %>
+      </ul>
+      <% if (start > 0) { %>
+        <a href="#charts/<%= previous %>">Previous</a>
+      <% } %>
+      <% if (start > 0 && next > 0) { %>
+        |
+      <% } %>
+      <% if (next > 0) { %>
+        <a href="#charts/<%= next %>">Next</a>
       <% } %>
     </script>
 
     <script type="text/javascript">
-      $(function() { App.init(); });
+      $(function() { knitplot.init(); });
     </script>
   </body>
 </html>

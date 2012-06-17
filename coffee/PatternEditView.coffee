@@ -10,19 +10,17 @@ class PatternEditView extends Parse.View
 
   initialize: =>
     @parser = new ChartParser()
-    @model.bind("change", @render)
     @render()
 
   save: =>
-    @model.save
+    knitplot.chart.set
       title: @$('[name=title]').val()
       text: @$('[name=text]').val()
     ,
       success: =>
-        new NotificationView({ message: "Saved!" })
-        Backbone.history.navigate("pattern/#{@model.id}")
+        knitplot.saveChart()
       error: =>
-        new ErrorView({ message: "Unable to save." })
+        new ErrorView({ message: "Unable to set title and text." })
     false
 
   update: =>
@@ -33,11 +31,11 @@ class PatternEditView extends Parse.View
     graphic.draw(@canvas)
 
   render: =>
-    template = $("#pattern-template").html()
-    $(@el).html(_.template(template)({ model: @model }))
+    template = $("#chart-template").html()
+    $(@el).html(_.template(template)({ model: knitplot.chart }))
     $("#app").html(@el)
-    @$("[name=title]").val(@model.get("title"))
-    @$("[name=text]").val(@model.get("text"))
+    @$("[name=title]").val(knitplot.chart.get("title"))
+    @$("[name=text]").val(knitplot.chart.get("text"))
     div = @$('[name=chart]')
     @canvas = new Raphael(div.get(0))
     @update()

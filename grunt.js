@@ -6,13 +6,13 @@ module.exports = function(grunt) {
       knitplot: {
         files: [
           "coffee/Library.coffee",
-          "coffee/Pattern.coffee",
+          "coffee/Chart.coffee",
           "coffee/ChartParser.coffee",
           "coffee/Graphic.coffee",
           "coffee/NotificationView.coffee",
           "coffee/ErrorView.coffee",
-          "coffee/PatternEditView.coffee",
           "coffee/PatternListView.coffee",
+          "coffee/PatternEditView.coffee",
           "coffee/Router.coffee",
           "coffee/Knitplot.coffee"
         ],

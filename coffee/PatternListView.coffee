@@ -5,7 +5,7 @@ class PatternListView extends Parse.View
     @render()
 
   render: =>
-    template = $("#pattern-list-template").html()
+    template = $("#chart-list-template").html()
     $(@el).html _.template(template)
       collection: @collection.first(10)
       start: @start
