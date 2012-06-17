@@ -1159,7 +1159,9 @@
     function PatternEditView() {
       this.render = __bind(this.render, this);
 
-      this.update = __bind(this.update, this);
+      this.updateText = __bind(this.updateText, this);
+
+      this.updateTitle = __bind(this.updateTitle, this);
 
       this.save = __bind(this.save, this);
 
@@ -1169,7 +1171,8 @@
 
     PatternEditView.prototype.events = {
       "submit form": "save",
-      "keyup textarea": "update"
+      "keyup input": "updateTitle",
+      "keyup textarea": "updateText"
     };
 
     PatternEditView.prototype.initialize = function() {
@@ -1178,26 +1181,57 @@
     };
 
     PatternEditView.prototype.save = function() {
-      var _this = this;
-      knitplot.chart.set({
+      var attrs, options,
+        _this = this;
+      attrs = {
         title: this.$('[name=title]').val(),
         text: this.$('[name=text]').val()
-      }, {
-        success: function() {
-          return knitplot.saveChart();
-        },
+      };
+      options = {
         error: function() {
           return new ErrorView({
             message: "Unable to set title and text."
           });
         }
-      });
+      };
+      if (knitplot.chart.set(attrs, options)) {
+        knitplot.saveChart();
+      }
       return false;
     };
 
-    PatternEditView.prototype.update = function() {
-      var chart, graphic, parseResults, text;
+    PatternEditView.prototype.updateTitle = function() {
+      var title,
+        _this = this;
+      title = this.$('[name=title]').val();
+      if (title !== (knitplot.chart.get('title') || "")) {
+        return knitplot.chart.set({
+          title: title
+        }, {
+          error: function() {
+            return new ErrorView({
+              message: "Unable to set title."
+            });
+          }
+        });
+      }
+    };
+
+    PatternEditView.prototype.updateText = function() {
+      var chart, graphic, parseResults, text,
+        _this = this;
       text = this.$('[name=text]').val();
+      if (text !== (knitplot.chart.get('text') || "")) {
+        knitplot.chart.set({
+          text: text
+        }, {
+          error: function() {
+            return new ErrorView({
+              message: "Unable to set text."
+            });
+          }
+        });
+      }
       parseResults = this.parser.parse(text);
       chart = parseResults.chart;
       graphic = new Graphic(chart, this.canvas.width, this.canvas.height);
@@ -1215,7 +1249,8 @@
       this.$("[name=text]").val(knitplot.chart.get("text"));
       div = this.$('[name=chart]');
       this.canvas = new Raphael(div.get(0));
-      this.update();
+      this.updateTitle();
+      this.updateText();
       return this.delegateEvents();
     };
 
@@ -1239,17 +1274,22 @@
     Router.prototype.routes = {
       "": "newChart",
       "new": "newChart",
+      "new/:start": "newChart",
       "chart/:id": "editChart",
       "chart/:id/:start": "editChart",
       "charts/:start": "listCharts"
     };
 
-    Router.prototype.newChart = function() {
-      return knitplot.newChart();
+    Router.prototype.newChart = function(start) {
+      if (knitplot.confirmUnload()) {
+        return knitplot.newChart(start);
+      }
     };
 
     Router.prototype.editChart = function(id, start) {
-      return knitplot.editChart(id, start);
+      if (knitplot.confirmUnload()) {
+        return knitplot.editChart(id, start);
+      }
     };
 
     Router.prototype.listCharts = function(start) {
@@ -1266,6 +1306,10 @@
   Knitplot = (function() {
 
     function Knitplot() {
+      this.confirmUnloadMessage = __bind(this.confirmUnloadMessage, this);
+
+      this.confirmUnload = __bind(this.confirmUnload, this);
+
       this.fixHistory = __bind(this.fixHistory, this);
 
       this.listCharts = __bind(this.listCharts, this);
@@ -1282,14 +1326,18 @@
 
     Knitplot.prototype.init = function() {
       this.start = 0;
-      this.model = new Chart();
+      this.chart = new Chart();
       Parse.initialize("732uFxOqiBozGHcv6BUyEZrpQC0oIbmTbi4UJuK2", "JB48tpHfZ39NTwrRuQIoqq7GQzpdxLonrjpsj67L");
       new Router();
-      return Backbone.history.start();
+      Backbone.history.start();
+      return $(window).bind('beforeunload', this.confirmUnloadMessage);
     };
 
-    Knitplot.prototype.newChart = function() {
+    Knitplot.prototype.newChart = function(start) {
       this.chart = new Chart();
+      if (start) {
+        this.start = start;
+      }
       this.listCharts(this.start);
       new PatternEditView();
       return this.fixHistory();
@@ -1370,6 +1418,22 @@
         return Backbone.history.navigate("#chart/" + this.chart.id + "/" + this.start, {
           replace: true
         });
+      }
+    };
+
+    Knitplot.prototype.confirmUnload = function() {
+      var message;
+      message = this.confirmUnloadMessage();
+      if (message) {
+        return confirm("Are you sure you want to leave this page?\n\n" + message);
+      } else {
+        return true;
+      }
+    };
+
+    Knitplot.prototype.confirmUnloadMessage = function() {
+      if (this.chart.dirty("text") || this.chart.dirty("title")) {
+        return "Your chart has not been saved.";
       }
     };
 
