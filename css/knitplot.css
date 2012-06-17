@@ -91,6 +91,9 @@ button {
     width: 150px;
     height: 100%;
     background-color: blue;
+    border-radius: 15px;
+    margin: 5px;
+    padding: 5px;
 }
 
 #rightbar {
