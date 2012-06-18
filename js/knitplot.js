@@ -1158,7 +1158,9 @@
 
     SignUpView.prototype.signup = function() {
       var _this = this;
-      return Parse.User.signUp($('#email').val(), $('#password').val(), null, {
+      return Parse.User.signUp($('#email').val(), $('#password').val(), {
+        email: $('#email').val()
+      }, {
         success: function() {
           $(_this.el).remove();
           return new LoggedInView();
@@ -1182,11 +1184,17 @@
     __extends(LoggedInView, _super);
 
     function LoggedInView() {
+      this.logOut = __bind(this.logOut, this);
+
       this.render = __bind(this.render, this);
 
       this.initialize = __bind(this.initialize, this);
       return LoggedInView.__super__.constructor.apply(this, arguments);
     }
+
+    LoggedInView.prototype.events = {
+      "click #username": "logOut"
+    };
 
     LoggedInView.prototype.initialize = function() {
       return this.render();
@@ -1199,7 +1207,13 @@
         username: Parse.User.current().get('username')
       }));
       $('#user').html(this.el);
+      $('#username').button();
       return this.delegateEvents();
+    };
+
+    LoggedInView.prototype.logOut = function() {
+      Parse.User.logOut();
+      return new LoggedOutView();
     };
 
     return LoggedInView;

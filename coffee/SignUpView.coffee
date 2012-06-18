@@ -15,7 +15,9 @@ class SignUpView extends Parse.View
     $('#dialog-button-bar #signup').button()
 
   signup: =>
-    Parse.User.signUp $('#email').val(), $('#password').val(), null,
+    Parse.User.signUp $('#email').val(), $('#password').val(),
+      email: $('#email').val()
+    ,
       success: =>
         $(@el).remove()
         new LoggedInView()

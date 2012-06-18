@@ -1,5 +1,8 @@
 
 class LoggedInView extends Parse.View
+  events:
+    "click #username": "logOut"
+
   initialize: =>
     @render()
 
@@ -9,4 +12,10 @@ class LoggedInView extends Parse.View
       username: Parse.User.current().get('username')
     ))
     $('#user').html(@el)
+    $('#username').button()
+
     @delegateEvents()
+
+  logOut: =>
+    Parse.User.logOut()
+    new LoggedOutView()
