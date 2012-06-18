@@ -71,12 +71,16 @@ class Knitplot
     else
       Backbone.history.navigate("#chart/#{@chart.id}/#{@start}", { replace: true })
 
-  confirmUnload: =>
+  confirmUnload: (options) =>
     message = @confirmUnloadMessage()
     if message
-      confirm "Are you sure you want to leave this page?\n\n#{message}"
+      new ConfirmationView
+        message: "Are you sure you want to leave this page?\n\n#{message}"
+        yes: options.yes
+        no: options.no
     else
-      true
+      if options.yes
+        options.yes()
 
   confirmUnloadMessage: =>
     if @chart.dirty("text") or @chart.dirty("title")

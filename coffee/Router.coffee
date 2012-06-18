@@ -9,12 +9,18 @@ class Router extends Backbone.Router
     "charts/:start": "listCharts"
 
   newChart: (start) =>
-    if knitplot.confirmUnload()
-      knitplot.newChart(start)
+    knitplot.confirmUnload
+      yes: ->
+        knitplot.newChart(start)
+      no: ->
+        knitplot.fixHistory()
 
   editChart: (id, start) =>
-    if knitplot.confirmUnload()
-      knitplot.editChart(id, start)
+    knitplot.confirmUnload
+      yes: ->
+        knitplot.editChart(id, start)
+      no: ->
+        knitplot.fixHistory()
 
   listCharts: (start = 0) =>
     knitplot.listCharts(start)

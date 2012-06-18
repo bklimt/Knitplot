@@ -18,4 +18,7 @@ class LoggedInView extends Parse.View
 
   logOut: =>
     Parse.User.logOut()
-    new LoggedOutView()
+    new ConfirmationView
+      message: "Are you sure you want to log out?"
+      yes: ->
+        new LoggedOutView()

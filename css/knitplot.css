@@ -69,6 +69,12 @@ textarea[name=body] {
     font-size: 15px;
 }
 
+#confirmation-message {
+    font-weight: bold;
+    font-size: 15px;
+    padding: 15px;
+}
+
 #login-dialog td {
     padding: 7px;
 }
