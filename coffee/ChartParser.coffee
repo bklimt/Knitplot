@@ -63,8 +63,9 @@ class ChartParser
       found = true
     else
       # Maybe this is like t2r -> t#r.
-      [match, prefix, number, suffix] = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec text
+      match = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec text
       if match
+        [match, prefix, number, suffix] = match
         altText = "#{prefix}##{suffix}"
         if match and Library[altText]
           action = _.extend(defaults, Library[altText], action)

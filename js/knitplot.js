@@ -771,8 +771,9 @@
         action = _.extend(defaults, Library[text], action);
         found = true;
       } else {
-        _ref1 = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec(text), match = _ref1[0], prefix = _ref1[1], number = _ref1[2], suffix = _ref1[3];
+        match = /^([^0-9]*)([0-9]*)([^0-9]*)$/.exec(text);
         if (match) {
+          _ref1 = match, match = _ref1[0], prefix = _ref1[1], number = _ref1[2], suffix = _ref1[3];
           altText = "" + prefix + "#" + suffix;
           if (match && Library[altText]) {
             action = _.extend(defaults, Library[altText], action);
