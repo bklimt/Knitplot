@@ -11,6 +11,7 @@ module.exports = function(grunt) {
           "coffee/Graphic.coffee",
           "coffee/NotificationView.coffee",
           "coffee/ErrorView.coffee",
+          "coffee/SignUpView.coffee",
           "coffee/LoggedInView.coffee",
           "coffee/LoggedOutView.coffee",
           "coffee/PatternListView.coffee",

@@ -21,4 +21,4 @@ class LoggedOutView extends Parse.View
     alert "What the what?"
 
   signUp: =>
-    $('#signup-dialog').dialog({ height: 150, modal: true })
+    new SignUpView()
