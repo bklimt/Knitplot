@@ -1,6 +1,6 @@
 
 class NotificationView extends Parse.View
-  className: "success"
+  className: "ui-state-highlight ui-corner-all"
 
   initialize: =>
     @render()

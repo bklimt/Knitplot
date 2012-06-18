@@ -102,6 +102,14 @@ button {
     background-color: yellow;
 }
 
+#logo {
+    float: left;
+}
+
+#user {
+    float: right;
+}
+
 #main {
     width: 100%;
     background-color: green;

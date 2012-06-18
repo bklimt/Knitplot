@@ -50,6 +50,9 @@ class PatternEditView extends Parse.View
     template = $("#chart-template").html()
     $(@el).html(_.template(template)({ model: knitplot.chart }))
     $("#app").html(@el)
+
+    $("#save").button()
+
     @$("[name=title]").val(knitplot.chart.get("title"))
     @$("[name=text]").val(knitplot.chart.get("text"))
     div = @$('[name=chart]')

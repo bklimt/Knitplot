@@ -1,4 +1,4 @@
 
 class ErrorView extends NotificationView
-  className: "error"
+  className: "ui-state-error"
 

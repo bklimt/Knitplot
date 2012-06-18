@@ -17,10 +17,14 @@ class Knitplot
       @start = start
 
     @listCharts(@start)
+    @showUser()
     new PatternEditView()
     @fixHistory()
 
   editChart: (id, start) =>
+    if id == "new"
+      return @newChart(start)
+
     @chart = new Chart({ objectId: id })
     if start
       @start = start
@@ -29,9 +33,10 @@ class Knitplot
       success: =>
         new PatternEditView()
       error: (pattern, error) ->
-        new Error({ message: "Unable to load chart." })
+        new ErrorView({ message: "Unable to load chart." })
         window.location.hash = "#"
     @listCharts(@start)
+    @showUser()
 
   saveChart: () =>
     knitplot.chart.save
@@ -51,8 +56,14 @@ class Knitplot
       success: =>
         new PatternListView(collection: charts, start: parseInt(start))
       error: (charts, error) ->
-        new Error({ message: "Unable to load chart list." })
+        new ErrorView({ message: "Unable to load chart list." })
     @fixHistory()
+
+  showUser: =>
+    if Parse.User.current()
+      new LoggedInView()
+    else
+      new LoggedOutView()
 
   fixHistory: =>
     if @chart.isNew()
