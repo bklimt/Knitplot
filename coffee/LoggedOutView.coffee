@@ -18,7 +18,7 @@ class LoggedOutView extends Parse.View
     @delegateEvents()
 
   logIn: =>
-    alert "What the what?"
+    new LogInView()
 
   signUp: =>
     new SignUpView()

@@ -69,6 +69,10 @@ textarea[name=body] {
     font-size: 15px;
 }
 
+#login-dialog td {
+    padding: 7px;
+}
+
 #signup-dialog td {
     padding: 7px;
 }
