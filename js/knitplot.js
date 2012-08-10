@@ -1483,9 +1483,10 @@
     };
 
     PatternEditView.prototype.updateText = function() {
-      var chart, graphic, parseResults, text,
+      var chart, graphic, html, parseResults, text,
         _this = this;
-      text = this.$('[name=text]').val();
+      html = this.$('[name=text]').html();
+      text = html.replace(/<br\/?>/gm, '\n');
       if (text !== (knitplot.chart.get('text') || "")) {
         knitplot.chart.set({
           text: text
@@ -1504,7 +1505,7 @@
     };
 
     PatternEditView.prototype.render = function() {
-      var div, template;
+      var div, html, template, text;
       template = $("#chart-template").html();
       $(this.el).html(_.template(template)({
         model: knitplot.chart
@@ -1512,7 +1513,9 @@
       $("#app").html(this.el);
       $("#save").button();
       this.$("[name=title]").val(knitplot.chart.get("title"));
-      this.$("[name=text]").val(knitplot.chart.get("text"));
+      text = knitplot.chart.get("text");
+      html = text.replace(/\n/gm, '<br/>');
+      this.$("[name=text]").html(html);
       div = this.$('[name=chart]');
       this.canvas = new Raphael(div.get(0));
       this.updateTitle();

@@ -124,7 +124,8 @@
         <label for="title">Title</label><br/>
         <input id="title" name="title" type="text"></input><br/>
         <div id="chart" name="chart"></div>
-        <textarea id="text" name="text" rows=20 cols=40 style="float: right"></textarea>
+        <!-- <textarea id="text" name="text" rows=20 cols=40 style="float: right"></textarea> -->
+        <div id="text" name="text" contenteditable="true" style="float: right; width: 200; height: 200"></div>
         <div style="clear:both"/>
         <button id="save"><%= model.isNew() ? "Create" : "Save" %></button>
       </form>
