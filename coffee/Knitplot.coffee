@@ -12,13 +12,15 @@ class Knitplot
     $(window).bind('beforeunload', @confirmUnloadMessage)
 
   newChart: (start) =>
-    @chart = new Chart()
+    @chart = new Chart
+      title: "Untitled"
+      text: "k2,p3\nyo4,k2tog"
     if start
       @start = start
 
     @listCharts(@start)
     @showUser()
-    new PatternEditView()
+    new PatternEditView(model: @chart)
     @fixHistory()
 
   editChart: (id, start) =>
@@ -31,7 +33,7 @@ class Knitplot
 
     @chart.fetch
       success: =>
-        new PatternEditView()
+        new PatternEditView(model: @chart)
       error: (pattern, error) ->
         new ErrorView({ message: "Unable to load chart." })
         window.location.hash = "#"
@@ -39,9 +41,11 @@ class Knitplot
     @showUser()
 
   saveChart: () =>
+    if !knitplot.chart.get "creator"
+      knitplot.chart.set "creator", Parse.User.current()
     knitplot.chart.save
       success: =>
-        new NotificationView({ message: "Saved!" })
+        new SuccessView({ message: "Saved!" })
         @listCharts(0)
         @fixHistory()
       error: =>
@@ -50,6 +54,7 @@ class Knitplot
   listCharts: (start = 0) =>
     @start = start
     query = new Parse.Query(Chart)
+    query.equalTo "creator", Parse.User.current()
     query.descending("updatedAt", "createdAt").skip(start).limit(11)
     charts = query.collection()
     charts.fetch

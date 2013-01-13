@@ -95,6 +95,9 @@ scaleAndTranslate = (shape, x, y, width, height) ->
 
 class Graphic
   constructor: (chart, maxWidth, maxHeight) ->
+    maxWidth = maxWidth - 1
+    maxHeight = maxHeight - 1
+ 
     # Figure out how many columns there are.
     columns = 1
     for row in chart
@@ -107,15 +110,15 @@ class Graphic
   
     # Find the actual dimensions, given the aspect ratio.
     width = maxWidth
-    columnWidth = width / columns
-    rowHeight = columnWidth * 0.75
+    columnWidth = Math.floor(width / columns)
+    rowHeight = Math.floor(columnWidth * 0.75)
     height = rowHeight * rows
     if height > maxHeight
       height = maxHeight
-      rowHeight = height / rows
-      columnWidth = rowHeight / 0.75
+      rowHeight = Math.floor(height / rows)
+      columnWidth = Math.floor(rowHeight / 0.75)
       width = columnWidth * columns
-  
+
     # Actually build the graphic
     @graphic = { width: width, height: height, shapes: [] }
     for row, rowIndex in chart
@@ -123,8 +126,8 @@ class Graphic
       for action in row
         for rep in [1 .. action.repetitions]
           for shape in action.graphic
-            newShapeX = (columns - (column + action.width)) * columnWidth
-            newShapeY = (rows - (rowIndex + 1)) * rowHeight
+            newShapeX = 1 + (columns - (column + action.width)) * columnWidth
+            newShapeY = 1 + (rows - (rowIndex + 1)) * rowHeight
             newShapeWidth = action.width * columnWidth
             newShapeHeight = rowHeight
             newShape = scaleAndTranslate(shape,

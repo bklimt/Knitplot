@@ -4,8 +4,6 @@
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
   height: 300px;
-  /* TODO(klimt): Move this. */
-  border: solid black 1px;
 }
 .CodeMirror-scroll {
   /* Set scrolling behaviour here */

@@ -4,7 +4,8 @@ html {
 body {
     text-align: left;
     font-family: Helvetica;
-    color: #555;
+    color: #555555;
+    background-color: #cccccc;
 }
 
 div {
@@ -16,11 +17,13 @@ table {
 
 h1 {
     font-size: 35px;
+    display: inline-block;
+    margin: 5px;
 }
 
 h1 a {
     text-decoration: none;
-    color: #555;
+    color: #555555;
 }
 
 h1 a:hover {
@@ -29,13 +32,19 @@ h1 a:hover {
 
 h2 {
     font-size: 15px;
-    color: #aaa;
+    color: #555555;
     font-weight: normal;
+    display: inline-block;
+    margin: 5px;
 }
 
 h3 {
     font-size: 15px;
     margin-bottom: 15px;
+}
+
+h3 a:visited {
+    /* color: #000000; */
 }
 
 ul {
@@ -51,22 +60,35 @@ ul li a {
 }
 
 ul li a:hover {
-    background: #eee;
+    background: #eeeeee;
+    border-radius: 5px;
 }
 
 label {
     font-weight: bold;
     font-size: 15px;
+    margin: 5px;
+    margin-right: 0px;
 }
 
 input[name=title] {
-    width: 100%;
+    width: 250px;
+    margin: 5px;
 }
 
-textarea[name=body] {
+textarea[name=text] {
     width: 100%;
     height: 300px;
     font-size: 15px;
+    float: right;
+}
+
+#new {
+    margin: 5px;
+}
+
+#save {
+    margin: 5px;
 }
 
 #confirmation-message {
@@ -89,16 +111,17 @@ textarea[name=body] {
 }
 
 #topbar {
-    height: 80px;
+    height: 45px;
     width: 100%;
-    background-color: red;
+    /* background-color: red; */
+    background-color: #f6a828;
 }
 
 #leftbar {
     width: 150px;
     height: 100%;
-    background-color: blue;
-    border-radius: 15px;
+    background-color: #f6a828;
+    border-radius: 5px;
     margin: 5px;
     padding: 5px;
 }
@@ -106,7 +129,9 @@ textarea[name=body] {
 #rightbar {
     width: 100px;
     height: 200px;
-    background-color: yellow;
+    background-color: #eeeeee;
+    margin: 5px;
+    padding: 5px;
 }
 
 #logo {
@@ -115,21 +140,23 @@ textarea[name=body] {
 
 #user {
     float: right;
+    margin: 5px;
 }
 
 #main {
     width: 100%;
-    background-color: green;
+    /* background-color: green; */
 }
 
 #app {
-    background-color: lightgreen;
+    /* background-color: lightgreen; */
 }
 
 #chart {
   width: 49%;
   height: 100%;
   float: left;
+  margin: 5px;
 }
 
 #text {
@@ -139,19 +166,29 @@ textarea[name=body] {
 }
 
 #notification {
-    height: 25px;
+    display: none;
     font-size: 15px;
-    background-color: orange;
+    padding: 5px;
+    height: 25px;
+    margin: 5px;
+    /* background-color: orange; */
 }
 
 #notification .success, #notification .error {
-    color: green;
-    width: 100%;
-    border: 1px solid #ddd;
-    background: #eee;
+    border: 1px solid #dddddd;
     padding: 5px;
+    height: 15px;
+    margin: 0px;
+}
+
+#notification .success {
+    background: lightgreen;
 }
 
 #notification .error {
-    color: red;
+}
+
+.CodeMirror {
+  border: solid black 1px;
+  margin: 5px;
 }

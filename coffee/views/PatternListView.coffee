@@ -1,8 +1,14 @@
 
 class PatternListView extends Parse.View
+  events:
+    "click #new": "onClickNew"
+
   initialize: =>
     @start = @options.start
     @render()
+
+  onClickNew: =>
+    knitplot.newChart()
 
   render: =>
     template = $("#chart-list-template").html()
@@ -12,5 +18,6 @@ class PatternListView extends Parse.View
       previous: @start - 10
       next: if @collection.size() > 10 then @start + 10 else 0
     $("#leftbar").html(@el)
+    $("#new").button()
     @delegateEvents()
 
