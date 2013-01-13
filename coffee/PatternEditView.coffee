@@ -34,8 +34,7 @@ class PatternEditView extends Parse.View
           new ErrorView({ message: "Unable to set title." })
 
   updateText: =>
-    html = @$('[name=text]').html()
-    text = html.replace(/<br\/?>/gm, '\n')
+    text = @textArea.getValue()
     if text != (knitplot.chart.get('text') or "")
       knitplot.chart.set
         text: text
@@ -54,10 +53,13 @@ class PatternEditView extends Parse.View
 
     $("#save").button()
 
+    @textArea = CodeMirror.fromTextArea $("#text")[0],
+      theme: "solarized light"
+      lineNumbers: true
+
     @$("[name=title]").val(knitplot.chart.get("title"))
-    text = knitplot.chart.get("text")
-    html = text.replace(/\n/gm, '<br/>')
-    @$("[name=text]").html(html)
+    text = knitplot.chart.get("text") or ""
+    @textArea.setValue text
     div = @$('[name=chart]')
     @canvas = new Raphael(div.get(0))
     @updateTitle()

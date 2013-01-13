@@ -1483,10 +1483,9 @@
     };
 
     PatternEditView.prototype.updateText = function() {
-      var chart, graphic, html, parseResults, text,
+      var chart, graphic, parseResults, text,
         _this = this;
-      html = this.$('[name=text]').html();
-      text = html.replace(/<br\/?>/gm, '\n');
+      text = this.textArea.getValue();
       if (text !== (knitplot.chart.get('text') || "")) {
         knitplot.chart.set({
           text: text
@@ -1505,17 +1504,20 @@
     };
 
     PatternEditView.prototype.render = function() {
-      var div, html, template, text;
+      var div, template, text;
       template = $("#chart-template").html();
       $(this.el).html(_.template(template)({
         model: knitplot.chart
       }));
       $("#app").html(this.el);
       $("#save").button();
+      this.textArea = CodeMirror.fromTextArea($("#text")[0], {
+        theme: "solarized light",
+        lineNumbers: true
+      });
       this.$("[name=title]").val(knitplot.chart.get("title"));
-      text = knitplot.chart.get("text");
-      html = text.replace(/\n/gm, '<br/>');
-      this.$("[name=text]").html(html);
+      text = knitplot.chart.get("text") || "";
+      this.textArea.setValue(text);
       div = this.$('[name=chart]');
       this.canvas = new Raphael(div.get(0));
       this.updateTitle();
