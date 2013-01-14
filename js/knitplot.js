@@ -1626,7 +1626,8 @@
     ParseErrorsView.prototype.initialize = function() {
       this.$el = $("#errors");
       this.parser = this.options.parser;
-      return this.parser.on("change:errors", this.onChangeErrors);
+      this.parser.on("change:errors", this.onChangeErrors);
+      return this.onChangeErrors();
     };
 
     ParseErrorsView.prototype.onChangeErrors = function() {

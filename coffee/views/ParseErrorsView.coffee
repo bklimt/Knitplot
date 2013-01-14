@@ -4,6 +4,7 @@ class ParseErrorsView extends Parse.View
     @$el = $("#errors")
     @parser = @options.parser
     @parser.on "change:errors", @onChangeErrors
+    @onChangeErrors()
 
   onChangeErrors: =>
     if @parser.get("errors").length == 0
