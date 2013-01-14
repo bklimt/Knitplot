@@ -1,5 +1,5 @@
 
-class ChartParser
+class ChartParser extends Backbone.Model
   parse: (text) =>
     @text = text
     @line = 0
@@ -9,11 +9,12 @@ class ChartParser
     @warnings = []
     @errors = []
     chart = @_parseChart()
-    return {
+    @set({
       chart: chart
       errors: @errors
       warnings: @warnings
-    }
+    })
+    @attributes
 
   _addMessage: (list, message) =>
     list.push

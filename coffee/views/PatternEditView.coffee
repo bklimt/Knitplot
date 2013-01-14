@@ -6,6 +6,7 @@
 class PatternEditView extends Parse.View
   events:
     "submit form": "onSaveButton"
+    "click #svg": "onSVGButton"
     "keyup input": "onKeyUpTitle"
     "keyup textarea": "onKeyUpText"
 
@@ -13,6 +14,13 @@ class PatternEditView extends Parse.View
     @parser = new ChartParser()
     @model.on "change:text", @onChangeText
     @render()
+
+  onSVGButton: =>
+    svg = $("#chart").html()
+    url = "data:image/svg+xml," + encodeURIComponent(svg)
+    new SVGPreviewView
+      url: url
+    false
 
   onSaveButton: =>
     if !Parse.User.current()
@@ -68,6 +76,7 @@ class PatternEditView extends Parse.View
     $(@el).html(_.template(template)({ model: @model }))
     $("#app").html @el
     $("#save").button()
+    $("#svg").button()
 
     div = @$('[name=chart]')
     @canvas = new Raphael(div.get(0))
@@ -77,6 +86,8 @@ class PatternEditView extends Parse.View
 
     @titleEdit = @$("[name=title]")
     @onChangeTitle()
+
+    new ParseErrorsView({ parser: @parser })
 
     @delegateEvents()
 

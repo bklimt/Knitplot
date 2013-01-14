@@ -15,7 +15,7 @@
     <script src="js/jquery.dotimeout.js"></script>
     <script src="js/jquery-ui-1.8.21.custom.min.js"></script>
     <script src="js/raphael-2.1.0.js"></script>
-    <script src="js/backbone-0.9.2.js"></script>
+    <script src="js/backbone-0.9.9.js"></script>
     <script src="js/parse-1.1.15.js"></script>
     <script src="js/knitplot.js"></script>
 
@@ -149,18 +149,24 @@
           <tr>
             <td style="vertical-align: middle">
               <label for="title">Title: </label>
-            </td>
-            <td style="vertical-align: middle; width: 100%">
               <input id="title" name="title" type="text"></input>
             </td>
-            <td style="vertical-align: middle">
+            <td style="vertical-align: middle; text-align: right">
+              <button id="svg">Open&nbsp;SVG</button>
               <button id="save"><%= model.isNew() ? "Create" : "Save" %></button>
             </td>
           </tr>
           <tr>
-            <td colspan=3>
-              <div id="chart" name="chart"></div>
-              <textarea id="text" name="text" rows=20 cols=40></textarea>
+            <td rowspan=2>
+              <center><div id="chart" name="chart"></div></center>
+            </td>
+            <td>
+              <textarea id="text" name="text" rows=25 cols=35></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div id="errors" class="ui-state-error"></div>
             </td>
           </tr>
         </table>
@@ -184,6 +190,33 @@
       <% if (next > 0) { %>
         <a href="#charts/<%= next %>">Next</a>
       <% } %>
+    </script>
+
+    <script type="text/template" id="svg-preview-template">
+      <div id="svg-preview-dialog">
+        <table>
+          <tr>
+            <td rowspan=2>
+              <iframe id="svg-preview-iframe" src="<%= url %>"></iframe>
+            </td>
+            <td>
+              &nbsp;<br/>
+              Right-click <a href="<%= url %>">here</a> and choose "Save Link As...".<br/>
+              &nbsp;<br/>
+              If you're using a trackpad, it's usually 2-finger click.<br/>
+              &nbsp;<br/>
+              Or you can hold down "control" while you click.<br/>
+              &nbsp;<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div id="dialog-button-bar">
+                <button id="okay">Okay</button>
+              </div>
+            </td>
+          </tr>
+      </div>
     </script>
 
     <script type="text/javascript">
