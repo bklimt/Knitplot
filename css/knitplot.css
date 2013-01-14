@@ -167,6 +167,11 @@ button {
     min-width: 320px;
 }
 
+.error-mark {
+    color: red !important;
+    text-decoration: underline;
+}
+
 #errors {
     min-width: 300px;
     height: 36px;

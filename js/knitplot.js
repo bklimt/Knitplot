@@ -1655,6 +1655,8 @@
     function PatternEditView() {
       this.render = __bind(this.render, this);
 
+      this.onChangeErrors = __bind(this.onChangeErrors, this);
+
       this.onChangeText = __bind(this.onChangeText, this);
 
       this.onKeyUpText = __bind(this.onKeyUpText, this);
@@ -1680,7 +1682,9 @@
 
     PatternEditView.prototype.initialize = function() {
       this.parser = new ChartParser();
+      this.errorMarks = [];
       this.model.on("change:text", this.onChangeText);
+      this.parser.on("change:errors", this.onChangeErrors);
       return this.render();
     };
 
@@ -1771,6 +1775,25 @@
       chart = parseResults.chart;
       graphic = new Graphic(chart, this.canvas.width, this.canvas.height);
       return graphic.draw(this.canvas);
+    };
+
+    PatternEditView.prototype.onChangeErrors = function() {
+      var _this = this;
+      _.each(this.errorMarks, function(mark) {
+        return mark.clear();
+      });
+      this.errorMarks = [];
+      return _.each(this.parser.errors, function(error) {
+        return _this.errorMarks.push(_this.textArea.markText({
+          line: error.line - 1,
+          ch: error.column - 1
+        }, {
+          line: error.line - 1,
+          ch: (error.column + error.length) - 1
+        }, {
+          className: "error-mark"
+        }));
+      });
     };
 
     PatternEditView.prototype.render = function() {

@@ -12,7 +12,9 @@ class PatternEditView extends Parse.View
 
   initialize: =>
     @parser = new ChartParser()
+    @errorMarks = []
     @model.on "change:text", @onChangeText
+    @parser.on "change:errors", @onChangeErrors
     @render()
 
   onSVGButton: =>
@@ -70,6 +72,23 @@ class PatternEditView extends Parse.View
     chart = parseResults.chart
     graphic = new Graphic chart, @canvas.width, @canvas.height
     graphic.draw @canvas
+
+  onChangeErrors: =>
+    # Clear the old error marks.
+    _.each @errorMarks, (mark) ->
+      mark.clear()
+    @errorMarks = []
+
+    # Add and error mark for each of hte new errors.
+    _.each @parser.errors, (error) =>
+      @errorMarks.push @textArea.markText
+        line: error.line - 1
+        ch: error.column - 1
+      ,
+        line: error.line - 1
+        ch: (error.column + error.length) - 1
+      ,
+        className: "error-mark"
 
   render: =>
     template = $("#chart-template").html()
