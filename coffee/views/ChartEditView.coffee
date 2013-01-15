@@ -3,7 +3,7 @@
 # The actual View object
 #
 
-class PatternEditView extends Parse.View
+class ChartEditView extends Parse.View
   events:
     "submit form": "onSaveButton"
     "click #svg": "onSVGButton"

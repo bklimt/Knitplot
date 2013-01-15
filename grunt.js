@@ -19,9 +19,9 @@ module.exports = function(grunt) {
           "coffee/views/LoggedOutView.coffee",
           "coffee/views/LogInView.coffee",
           "coffee/views/NeedToSignUpView.coffee",
+          "coffee/views/ChartEditView.coffee",
+          "coffee/views/ChartListView.coffee",
           "coffee/views/ParseErrorsView.coffee",
-          "coffee/views/PatternEditView.coffee",
-          "coffee/views/PatternListView.coffee",
           "coffee/views/SignUpView.coffee",
           "coffee/views/SVGPreviewView.coffee"
         ],

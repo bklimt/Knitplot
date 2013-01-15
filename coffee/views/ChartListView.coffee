@@ -1,5 +1,5 @@
 
-class PatternListView extends Parse.View
+class ChartListView extends Parse.View
   events:
     "click #new": "onClickNew"
 

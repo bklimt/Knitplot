@@ -20,7 +20,7 @@ class Knitplot
 
     @listCharts(@start)
     @showUser()
-    new PatternEditView(model: @chart)
+    new ChartEditView(model: @chart)
     @fixHistory()
 
   editChart: (id, start) =>
@@ -33,8 +33,8 @@ class Knitplot
 
     @chart.fetch
       success: =>
-        new PatternEditView(model: @chart)
-      error: (pattern, error) ->
+        new ChartEditView(model: @chart)
+      error: (chart, error) ->
         new ErrorView({ message: "Unable to load chart." })
         window.location.hash = "#"
     @listCharts(@start)
@@ -59,7 +59,7 @@ class Knitplot
     charts = query.collection()
     charts.fetch
       success: =>
-        new PatternListView(collection: charts, start: parseInt(start))
+        new ChartListView(collection: charts, start: parseInt(start))
       error: (charts, error) ->
         new ErrorView({ message: "Unable to load chart list." })
     @fixHistory()
