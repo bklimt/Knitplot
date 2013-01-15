@@ -58,6 +58,16 @@ drawShape = (canvas, shape) ->
   else
     console.warn(shape)
 
+containsPoint = (shape, x, y) ->
+  if shape.rectangle
+    left = shape.rectangle.topLeft[0]
+    top = shape.rectangle.topLeft[1]
+    right = left + shape.rectangle.width
+    bottom = top + shape.rectangle.height
+    if left <= x < right and top <= y < bottom
+      return true
+  false
+
 #
 # Shape construction functions
 #
@@ -133,13 +143,21 @@ class Graphic
             newShape = scaleAndTranslate(shape,
                                          newShapeX, newShapeY,
                                          newShapeWidth, newShapeHeight)
-            newShape.textOffset = action.textOffset
-            newShape.textLength = action.textLength
+            newShape.action = action
             @graphic.shapes.push(newShape)
           column = column + action.width
 
-  draw: (canvas) ->
+  draw: (canvas) =>
     canvas.clear()
     for shape in @graphic.shapes
       drawShape(canvas, shape)
+
+  _shapeAtPoint: (x, y) =>
+    for shape in @graphic.shapes
+      if containsPoint(shape, x, y)
+        return shape
+    undefined
+
+  actionAtPoint: (x, y) =>
+    @_shapeAtPoint(x, y)?.action
 
