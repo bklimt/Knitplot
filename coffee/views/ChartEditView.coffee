@@ -8,13 +8,10 @@ class ChartEditView extends Parse.View
     "submit form": "onSaveButton"
     "click #svg": "onSVGButton"
     "keyup input": "onKeyUpTitle"
-    "keyup textarea": "onKeyUpText"
 
   initialize: =>
     @parser = new ChartParser()
-    @errorMarks = []
     @model.on "change:text", @onChangeText
-    @parser.on "change:errors", @onChangeErrors
     @render()
 
   onSVGButton: =>
@@ -53,42 +50,8 @@ class ChartEditView extends Parse.View
     if @titleEdit.val() != title
       @titleEdit.val(title)
 
-  onKeyUpText: =>
-    text = @textArea.getValue() or ""
-    if text != (@model.get('text') or "")
-      @model.set
-        text: text
-      ,
-        error: =>
-          new ErrorView({ message: "Unable to set text." })
-
   onChangeText: =>
-    text = @model.get("text") or ""
-    # Update the text area.
-    if @textArea.getValue() != text
-      @textArea.setValue(text)
-    # Update the chart.
-    parseResults = @parser.parse text
-    chart = parseResults.chart
-    graphic = new Graphic chart, @canvas.width, @canvas.height
-    graphic.draw @canvas
-
-  onChangeErrors: =>
-    # Clear the old error marks.
-    _.each @errorMarks, (mark) ->
-      mark.clear()
-    @errorMarks = []
-
-    # Add and error mark for each of hte new errors.
-    _.each @parser.errors, (error) =>
-      @errorMarks.push @textArea.markText
-        line: error.line - 1
-        ch: error.column - 1
-      ,
-        line: error.line - 1
-        ch: (error.column + error.length) - 1
-      ,
-        className: "error-mark"
+    @parser.parse @model.get "text"
 
   render: =>
     template = $("#chart-template").html()
@@ -97,16 +60,22 @@ class ChartEditView extends Parse.View
     $("#save").button()
     $("#svg").button()
 
-    div = @$('[name=chart]')
-    @canvas = new Raphael(div.get(0))
-    @textArea = CodeMirror.fromTextArea $("#text")[0],
-      theme: "solarized light"
-    @onChangeText()
-
     @titleEdit = @$("[name=title]")
     @onChangeTitle()
 
-    new ParseErrorsView({ parser: @parser })
+    new ChartGraphicView
+      el: @$('[name=chart]').get(0)
+      parser: @parser
+
+    new ChartTextView
+      el: $("#text").get(0)
+      model: @model
+      parser: @parser
+
+    @onChangeText()
+
+    new ParseErrorsView
+      parser: @parser
 
     @delegateEvents()
 
