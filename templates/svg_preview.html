@@ -1,0 +1,28 @@
+    <script type="text/template" id="svg-preview-template">
+      <div id="svg-preview-dialog">
+        <table>
+          <tr>
+            <td rowspan=2>
+              <iframe id="svg-preview-iframe" src="<%= url %>"></iframe>
+            </td>
+            <td>
+              &nbsp;<br/>
+              Right-click <a href="<%= url %>">here</a> and choose "Save Link As...".<br/>
+              &nbsp;<br/>
+              If you're using a trackpad, it's usually 2-finger click.<br/>
+              &nbsp;<br/>
+              Or you can hold down "control" while you click.<br/>
+              &nbsp;<br/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div id="dialog-button-bar">
+                <button id="okay">Okay</button>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </script>
+

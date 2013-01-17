@@ -1,0 +1,17 @@
+    <script type="text/template" id="chart-list-template">
+      <button id="new">New Chart</button>
+      <ul>
+        <% _.each(collection, function(item) { %>
+          <li><a href="#chart/<%= item.id %>"><%= item.escape('title') %></a></li>
+        <% }); %>
+      </ul>
+      <% if (start > 0) { %>
+        <a href="#charts/<%= previous %>">Previous</a>
+      <% } %>
+      <% if (start > 0 && next > 0) { %>
+        |
+      <% } %>
+      <% if (next > 0) { %>
+        <a href="#charts/<%= next %>">Next</a>
+      <% } %>
+    </script>

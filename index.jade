@@ -1,0 +1,59 @@
+html
+  head
+    title Knitplot
+
+    mixin css(path)
+      link(href="css/" + path + ".css", rel="stylesheet", type="text/css")
+
+    +css("reset")
+    +css("codemirror")
+    +css("solarized")
+    +css("ui-lightness/jquery-ui-1.8.21.custom")
+    +css("knitplot")
+
+    mixin js(path)
+      script(src="js/" + path + ".js", type="application/javascript")
+
+    +js("codemirror")
+    +js("codemirror-mode")
+    +js("underscore-1.3.3")
+    +js("jquery-1.7.2")
+    +js("jquery.dotimeout")
+    +js("jquery-ui-1.8.21.custom.min")
+    +js("raphael-2.1.0")
+    +js("backbone-0.9.9")
+    +js("parse-1.1.15")
+    +js("knitplot")
+
+  body
+    #topbar
+      #logo
+        h1
+          a(href="#") KnitPlot
+        h2 A tool for knitters.
+      #user
+    table
+      tbody
+        tr
+          td
+            #leftbar Content
+          td(style="width: 100%")
+            #main
+              #notification
+              #app
+          td
+            #rightbar Content
+
+    include templates/confirmation.html
+    include templates/login.html
+    include templates/signup.html
+    include templates/need_to_sign_up.html
+    include templates/logged_in.html
+    include templates/logged_out.html
+    include templates/chart.html
+    include templates/chart_list.html
+    include templates/svg_preview.html
+
+    script(type="text/javascript")
+      $(function() { knitplot.init(); });
+
