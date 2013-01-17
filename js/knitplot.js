@@ -1759,8 +1759,8 @@
       }
       attrs = {
         creator: Parse.User.current(),
-        title: this.$('[name=title]').val(),
-        text: this.$('[name=text]').val()
+        title: this.$('#title').val(),
+        text: this.$('#text').val()
       };
       options = {
         error: function() {
@@ -1778,7 +1778,7 @@
     ChartEditView.prototype.onKeyUpTitle = function() {
       var title,
         _this = this;
-      title = this.$('[name=title]').val();
+      title = this.$('#title').val();
       if (title !== (this.model.get('title') || "")) {
         return this.model.set({
           title: title
@@ -1813,10 +1813,10 @@
       $("#app").html(this.el);
       $("#save").button();
       $("#svg").button();
-      this.titleEdit = this.$("[name=title]");
+      this.titleEdit = this.$("#title");
       this.onChangeTitle();
       new ChartGraphicView({
-        el: this.$('[name=chart]').get(0),
+        el: this.$('#chart').get(0),
         parser: this.parser
       });
       new ChartTextView({

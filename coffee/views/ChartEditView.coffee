@@ -27,8 +27,8 @@ class ChartEditView extends Parse.View
       return false
     attrs =
       creator: Parse.User.current()
-      title: @$('[name=title]').val()
-      text: @$('[name=text]').val()
+      title: @$('#title').val()
+      text: @$('#text').val()
     options =
       error: =>
         new ErrorView({ message: "Unable to set title and text." })
@@ -37,7 +37,7 @@ class ChartEditView extends Parse.View
     false
 
   onKeyUpTitle: =>
-    title = @$('[name=title]').val()
+    title = @$('#title').val()
     if title != (@model.get('title') or "")
       @model.set
         title: title
@@ -60,11 +60,11 @@ class ChartEditView extends Parse.View
     $("#save").button()
     $("#svg").button()
 
-    @titleEdit = @$("[name=title]")
+    @titleEdit = @$("#title")
     @onChangeTitle()
 
     new ChartGraphicView
-      el: @$('[name=chart]').get(0)
+      el: @$('#chart').get(0)
       parser: @parser
 
     new ChartTextView

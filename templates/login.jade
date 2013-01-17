@@ -1,0 +1,19 @@
+script#login-template(type="text/template")
+  #login-dialog
+    table
+      tr
+        td
+          label(for="email") Email:
+        td
+          input#email(type="text")
+      tr
+        td
+          label(for="password") Password:
+        td
+          input#password(type="password")
+      tr
+        td(colspan=2)
+          #dialog-button-bar
+            button#cancel Cancel :(
+            button#login Log In!
+

@@ -44,15 +44,15 @@ html
           td
             #rightbar Content
 
-    include templates/confirmation.html
-    include templates/login.html
-    include templates/signup.html
-    include templates/need_to_sign_up.html
-    include templates/logged_in.html
-    include templates/logged_out.html
-    include templates/chart.html
+    include templates/chart
     include templates/chart_list.html
-    include templates/svg_preview.html
+    include templates/confirmation
+    include templates/logged_in
+    include templates/logged_out
+    include templates/login
+    include templates/need_to_sign_up
+    include templates/signup
+    include templates/svg_preview
 
     script(type="text/javascript")
       $(function() { knitplot.init(); });
