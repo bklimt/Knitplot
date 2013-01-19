@@ -4,6 +4,7 @@ class ChartTextView extends Parse.View
     @errorMarks = []
     @parser = @options.parser
     @model.on "change:text", @onChangeText
+    @model.on "change:selection", @onChangeSelection
     @parser.on "change:errors", @onChangeErrors
     @render()
 
@@ -20,6 +21,17 @@ class ChartTextView extends Parse.View
     text = @model.get("text") or ""
     if @textArea.getValue() != text
       @textArea.setValue(text)
+
+  onChangeSelection: =>
+    selection = @model.get "selection"
+    if not selection
+      return
+    @textArea.setSelection
+      line: selection.start.row
+      ch: selection.start.column
+    ,
+      line: selection.end.row
+      ch: selection.end.column
 
   onChangeErrors: =>
     # Clear the old error marks.

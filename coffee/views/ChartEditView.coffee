@@ -65,6 +65,7 @@ class ChartEditView extends Parse.View
 
     new ChartGraphicView
       el: @$('#chart').get(0)
+      model: @model
       parser: @parser
 
     new ChartTextView

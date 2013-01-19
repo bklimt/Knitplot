@@ -1,6 +1,7 @@
 
 class ChartGraphicView extends Parse.View
   initialize: =>
+    @model = @options.model
     @parser = @options.parser
     @parser.on "change:chart", @onChangeChart
     @$el.on "click", @onCanvasClick
@@ -17,7 +18,13 @@ class ChartGraphicView extends Parse.View
     x = event.pageX - @$el.position().left
     y = event.pageY - @$el.position().top
     action = @graphic.actionAtPoint x, y
-    console.log action
+    @model.set "selection",
+      start:
+        row: action.textRow
+        column: action.textColumn
+      end:
+        row: action.textRow
+        column: action.textColumn + action.textLength
 
   render: =>
     @onChangeChart()

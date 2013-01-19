@@ -49,6 +49,8 @@ class ChartParser extends Backbone.Model
     action =
       action: text
       width: 1
+      textRow: @line
+      textColumn: ((@offset - @tokenLength) - @lineStart)
       textOffset: @offset - @tokenLength
       textLength: @tokenLength
 
