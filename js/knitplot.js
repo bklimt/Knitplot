@@ -1845,7 +1845,11 @@
     function ChartGraphicView() {
       this.render = __bind(this.render, this);
 
-      this.onCanvasClick = __bind(this.onCanvasClick, this);
+      this.onCanvasMouseUp = __bind(this.onCanvasMouseUp, this);
+
+      this.onCanvasMouseMove = __bind(this.onCanvasMouseMove, this);
+
+      this.onCanvasMouseDown = __bind(this.onCanvasMouseDown, this);
 
       this.onChangeChart = __bind(this.onChangeChart, this);
 
@@ -1857,7 +1861,9 @@
       this.model = this.options.model;
       this.parser = this.options.parser;
       this.parser.on("change:chart", this.onChangeChart);
-      this.$el.on("click", this.onCanvasClick);
+      this.$el.on("mousedown", this.onCanvasMouseDown);
+      this.$el.on("mousemove", this.onCanvasMouseMove);
+      this.$el.on("mouseup", this.onCanvasMouseUp);
       this.canvas = new Raphael(this.el);
       return this.render();
     };
@@ -1871,21 +1877,59 @@
       }
     };
 
-    ChartGraphicView.prototype.onCanvasClick = function(event) {
-      var action, x, y;
+    ChartGraphicView.prototype.onCanvasMouseDown = function(event) {
+      var x, y;
+      x = event.pageX - this.$el.position().left;
+      y = event.pageY - this.$el.position().top;
+      this.mouseDownAction = this.graphic.actionAtPoint(x, y);
+      if (!this.mouseDownAction) {
+        this.model.unset("selection");
+        return;
+      }
+      return this.model.set("selection", {
+        start: {
+          row: this.mouseDownAction.textRow,
+          column: this.mouseDownAction.textColumn
+        },
+        end: {
+          row: this.mouseDownAction.textRow,
+          column: this.mouseDownAction.textColumn + this.mouseDownAction.textLength
+        }
+      });
+    };
+
+    ChartGraphicView.prototype.onCanvasMouseMove = function(event) {
+      var action, endAction, startAction, x, y;
+      if (!this.mouseDownAction) {
+        return;
+      }
       x = event.pageX - this.$el.position().left;
       y = event.pageY - this.$el.position().top;
       action = this.graphic.actionAtPoint(x, y);
+      if (!action) {
+        return;
+      }
+      if (this.mouseDownAction.textOffset < action.textOffset) {
+        startAction = this.mouseDownAction;
+        endAction = action;
+      } else {
+        startAction = action;
+        endAction = this.mouseDownAction;
+      }
       return this.model.set("selection", {
         start: {
-          row: action.textRow,
-          column: action.textColumn
+          row: startAction.textRow,
+          column: startAction.textColumn
         },
         end: {
-          row: action.textRow,
-          column: action.textColumn + action.textLength
+          row: endAction.textRow,
+          column: endAction.textColumn + endAction.textLength
         }
       });
+    };
+
+    ChartGraphicView.prototype.onCanvasMouseUp = function(event) {
+      return delete this.mouseDownAction;
     };
 
     ChartGraphicView.prototype.render = function() {

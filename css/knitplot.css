@@ -167,6 +167,12 @@ button {
     min-width: 320px;
 }
 
+.cm-s-solarized.cm-s-light .CodeMirror-selected {
+  background: #d7d4f0;
+  /*background: #eee8d5;*/
+  color: inherit;
+}
+
 .error-mark {
     color: red !important;
     text-decoration: underline;
