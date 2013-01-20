@@ -9,6 +9,10 @@ class ChartTextView extends Parse.View
     @render()
 
 
+  focus: =>
+    @textArea.focus()
+
+
   onEditText: =>
     text = @textArea.getValue() or ""
     if text != (@model.get('text') or "")

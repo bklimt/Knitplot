@@ -63,15 +63,19 @@ class ChartEditView extends Parse.View
     @titleEdit = @$("#title")
     @onChangeTitle()
 
-    new ChartGraphicView
+    graphic = new ChartGraphicView
       el: @$('#chart').get(0)
       model: @model
       parser: @parser
 
-    new ChartTextView
+    text = new ChartTextView
       el: $("#text").get(0)
       model: @model
       parser: @parser
+
+    # When the graphic is used ot make a selection, focus the text field.
+    graphic.$el.on "mouseup", ->
+      text.focus()
 
     @onChangeText()
 

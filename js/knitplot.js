@@ -1848,7 +1848,7 @@
     };
 
     ChartEditView.prototype.render = function() {
-      var template;
+      var graphic, template, text;
       template = $("#chart-template").html();
       $(this.el).html(_.template(template)({
         model: this.model
@@ -1858,15 +1858,18 @@
       $("#svg").button();
       this.titleEdit = this.$("#title");
       this.onChangeTitle();
-      new ChartGraphicView({
+      graphic = new ChartGraphicView({
         el: this.$('#chart').get(0),
         model: this.model,
         parser: this.parser
       });
-      new ChartTextView({
+      text = new ChartTextView({
         el: $("#text").get(0),
         model: this.model,
         parser: this.parser
+      });
+      graphic.$el.on("mouseup", function() {
+        return text.focus();
       });
       this.onChangeText();
       new ParseErrorsView({
@@ -2084,6 +2087,8 @@
 
       this.onEditText = __bind(this.onEditText, this);
 
+      this.focus = __bind(this.focus, this);
+
       this.initialize = __bind(this.initialize, this);
       return ChartTextView.__super__.constructor.apply(this, arguments);
     }
@@ -2095,6 +2100,10 @@
       this.model.on("change:selection", this.onChangeSelection);
       this.parser.on("change:errors", this.onChangeErrors);
       return this.render();
+    };
+
+    ChartTextView.prototype.focus = function() {
+      return this.textArea.focus();
     };
 
     ChartTextView.prototype.onEditText = function() {
