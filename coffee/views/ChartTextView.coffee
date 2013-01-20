@@ -2,10 +2,9 @@
 class ChartTextView extends Parse.View
   initialize: =>
     @errorMarks = []
-    @parser = @options.parser
     @model.on "change:text", @onChangeText
-    @model.on "change:selection", @onChangeSelection
-    @parser.on "change:errors", @onChangeErrors
+    @model.transient.on "change:selection", @onChangeSelection
+    @model.transient.on "change:errors", @onChangeErrors
     @render()
 
 
@@ -26,7 +25,7 @@ class ChartTextView extends Parse.View
   onCursorActivity: =>
     start = @textArea.getCursor "start"
     end = @textArea.getCursor "end"
-    @model.set "selection",
+    @model.transient.set "selection",
       start:
         row: start.line
         column: start.ch
@@ -42,7 +41,7 @@ class ChartTextView extends Parse.View
 
 
   onChangeSelection: =>
-    selection = @model.get "selection"
+    selection = @model.transient.get "selection"
     if not selection
       return
     start = @textArea.getCursor "start"
@@ -66,7 +65,7 @@ class ChartTextView extends Parse.View
     @errorMarks = []
 
     # Add and error mark for each of hte new errors.
-    _.each @parser.errors, (error) =>
+    _.each @model.transient.get("errors"), (error) =>
       @errorMarks.push @textArea.markText
         line: error.line - 1
         ch: error.column - 1

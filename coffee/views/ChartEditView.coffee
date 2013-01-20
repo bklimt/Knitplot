@@ -10,8 +10,8 @@ class ChartEditView extends Parse.View
     "keyup input": "onKeyUpTitle"
 
   initialize: =>
-    @parser = new ChartParser()
-    @model.on "change:text", @onChangeText
+    @model = @options.model
+    @model.edit()
     @render()
 
   onSVGButton: =>
@@ -50,9 +50,6 @@ class ChartEditView extends Parse.View
     if @titleEdit.val() != title
       @titleEdit.val(title)
 
-  onChangeText: =>
-    @parser.parse @model.get "text"
-
   render: =>
     template = $("#chart-template").html()
     $(@el).html(_.template(template)({ model: @model }))
@@ -66,21 +63,17 @@ class ChartEditView extends Parse.View
     graphic = new ChartGraphicView
       el: @$('#chart').get(0)
       model: @model
-      parser: @parser
 
     text = new ChartTextView
       el: $("#text").get(0)
       model: @model
-      parser: @parser
 
     # When the graphic is used ot make a selection, focus the text field.
     graphic.$el.on "mouseup", ->
       text.focus()
 
-    @onChangeText()
-
     new ParseErrorsView
-      parser: @parser
+      model: @model
 
     @delegateEvents()
 

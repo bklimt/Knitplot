@@ -2,9 +2,8 @@
 class ChartGraphicView extends Parse.View
   initialize: =>
     @model = @options.model
-    @parser = @options.parser
-    @model.on "change:selection", @onChangeSelection
-    @parser.on "change:chart", @onChangeChart
+    @model.transient.on "change:actions", @onChangeActions
+    @model.transient.on "change:selection", @onChangeSelection
     @$el.on "mousedown", @onCanvasMouseDown
     @$el.on "mousemove", @onCanvasMouseMove
     @$el.on "mouseup", @onCanvasMouseUp
@@ -12,15 +11,15 @@ class ChartGraphicView extends Parse.View
     @render()
 
 
-  onChangeSelection: =>
-    @onChangeChart()
-
-
-  onChangeChart: =>
-    chart = @parser.get "chart"
+  onChangeActions: =>
+    actions = @model.transient.get "actions"
     if chart
-      @graphic = new Graphic chart, @canvas.width, @canvas.height
-      @graphic.draw @canvas, @model.get "selection"
+      @graphic = new Graphic actions, @canvas.width, @canvas.height
+      @graphic.draw @canvas, @model.transient.get "selection"
+
+
+  onChangeSelection: =>
+    @onChangeActions()
 
 
   onCanvasMouseDown: (event) =>
@@ -30,7 +29,7 @@ class ChartGraphicView extends Parse.View
     if not @mouseDownAction
       return
 
-    @model.set "selection",
+    @model.transient.set "selection",
       start:
         row: @mouseDownAction.textRow
         column: @mouseDownAction.textColumn
@@ -57,7 +56,7 @@ class ChartGraphicView extends Parse.View
       startAction = action
       endAction = @mouseDownAction
 
-    @model.set "selection",
+    @model.transient.set "selection",
       start:
         row: startAction.textRow
         column: startAction.textColumn
@@ -71,4 +70,4 @@ class ChartGraphicView extends Parse.View
 
 
   render: =>
-    @onChangeChart()
+    @onChangeActions()

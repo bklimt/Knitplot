@@ -1,6 +1,13 @@
 
-class ChartParser extends Backbone.Model
-  parse: (text) =>
+class ChartParser
+  constructor: (@chart) ->
+    @chart.on "change:text", @onChangeText
+    @onChangeText()
+
+  onChangeText: () =>
+    @_parse @chart.get "text"
+
+  _parse: (text) ->
     @text = text
     @line = 0
     @lineStart = 0
@@ -8,15 +15,14 @@ class ChartParser extends Backbone.Model
     @offset = 0
     @warnings = []
     @errors = []
-    chart = @_parseChart()
-    @set({
-      chart: chart
+    actions = @_parseChart()
+    @chart.transient.set({
+      actions: actions
       errors: @errors
       warnings: @warnings
     })
-    @attributes
 
-  _addMessage: (list, message) =>
+  _addMessage: (list, message) ->
     list.push
       message: message
       offset: @offset - @tokenLength
@@ -24,12 +30,12 @@ class ChartParser extends Backbone.Model
       column: ((@offset - @tokenLength) - @lineStart) + 1
       length: @tokenLength
 
-  _eatWhitespace: =>
+  _eatWhitespace: ->
     @tokenLength = 0
     while @text[@offset] and /[ \t\r]/.test @text[@offset]
       @offset++
 
-  _parseAction: =>
+  _parseAction: ->
     @_eatWhitespace()
     start = @offset
     @tokenLength = 0
@@ -80,7 +86,7 @@ class ChartParser extends Backbone.Model
       action = _.extend(defaults, Library.error, action, { action: "error" })
     return action
 
-  _parseRow: =>
+  _parseRow: ->
     row = []
     @_eatWhitespace()
     if (not @text[@offset]) or @text[@offset] is "\n"
@@ -105,7 +111,7 @@ class ChartParser extends Backbone.Model
         @_eatWhitespace()
     return row
 
-  _parseChart: =>
+  _parseChart: ->
     @_eatWhitespace()
     chart = []
     # Skip extra newlines at the beginning of the chart.
