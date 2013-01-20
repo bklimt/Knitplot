@@ -8,6 +8,7 @@ class ChartTextView extends Parse.View
     @parser.on "change:errors", @onChangeErrors
     @render()
 
+
   onEditText: =>
     text = @textArea.getValue() or ""
     if text != (@model.get('text') or "")
@@ -17,21 +18,42 @@ class ChartTextView extends Parse.View
         error: =>
           new ErrorView({ message: "Unable to set text." })
 
+
+  onCursorActivity: =>
+    start = @textArea.getCursor "start"
+    end = @textArea.getCursor "end"
+    @model.set "selection",
+      start:
+        row: start.line
+        column: start.ch
+      end:
+        row: end.line
+        column: end.ch
+
+
   onChangeText: =>
     text = @model.get("text") or ""
     if @textArea.getValue() != text
       @textArea.setValue(text)
 
+
   onChangeSelection: =>
     selection = @model.get "selection"
     if not selection
       return
-    @textArea.setSelection
-      line: selection.start.row
-      ch: selection.start.column
-    ,
-      line: selection.end.row
-      ch: selection.end.column
+    start = @textArea.getCursor "start"
+    end = @textArea.getCursor "end"
+    if (start.line != selection.start.row or
+        start.ch != selection.start.column or
+        end.line != selection.end.row or
+        end.ch != selection.end.column)
+      @textArea.setSelection
+        line: selection.start.row
+        ch: selection.start.column
+      ,
+        line: selection.end.row
+        ch: selection.end.column
+
 
   onChangeErrors: =>
     # Clear the old error marks.
@@ -50,10 +72,12 @@ class ChartTextView extends Parse.View
       ,
         className: "error-mark"
 
+
   render: =>
     @textArea = CodeMirror.fromTextArea @el,
       theme: "solarized light"
     @textArea.on "change", @onEditText
+    @textArea.on "cursorActivity", @onCursorActivity
     @onChangeText()
     @onChangeErrors()
 

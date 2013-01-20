@@ -49,6 +49,16 @@ drawSpline = (canvas, shape) ->
   spline.attr(shape.style)
 
 
+cursorColor = (color) ->
+  r = Math.round(parseInt(color.substring(1,3), 16) * 0.25)
+  g = Math.round(parseInt(color.substring(3,5), 16) * 1.00)
+  b = Math.round(parseInt(color.substring(5,7), 16) * 0.25)
+  ("#" +
+   ("0" + r.toString(16))[-2..] +
+   ("0" + g.toString(16))[-2..] +
+   ("0" + b.toString(16))[-2..])
+
+
 selectedColor = (color) ->
   r = Math.round(parseInt(color.substring(1,3), 16) * 0.75)
   g = Math.round(parseInt(color.substring(3,5), 16) * 0.75)
@@ -59,18 +69,43 @@ selectedColor = (color) ->
    ("0" + b.toString(16))[-2..])
 
 
+isSelected = (action, selection) ->
+  return false unless selection
+
+  # Does the selection end before the action?
+  if ((selection.end.row < action.textRow) or
+      ((selection.end.row == action.textRow) and
+       (selection.end.column < action.textColumn)))
+    return false
+
+  # Does the selection start after the action?
+  if ((selection.start.row > action.textRow) or
+      ((selection.start.row == action.textRow) and
+       (selection.start.column > (action.textColumn + action.textLength))))
+    return false
+
+  # TODO(klimt): Change the highlight based on the overlap.
+
+  before = ((selection.start.row < action.textRow) or
+            ((selection.start.row == action.textRow) and
+             (selection.start.column <= action.textColumn)))
+
+  after = ((selection.end.row > action.textRow) or
+           ((selection.end.row == action.textRow) and
+            (selection.end.column >= action.textColumn + action.textLength)))
+
+  return true
+
+
 drawShape = (canvas, shape, selection) ->
-  selected = (selection and
-              ((shape.action.textRow > selection.start.row) or
-               ((shape.action.textRow == selection.start.row) and
-                (shape.action.textColumn >= selection.start.column))) and
-              ((shape.action.textRow < selection.end.row) or
-               ((shape.action.textRow == selection.end.row) and
-                (shape.action.textColumn <= selection.end.column))))
-  if selected
+  if isSelected shape.action, selection
     shape = _.clone shape
     shape.style = _.clone shape.style
-    shape.style.fill = selectedColor shape.style.fill
+    if ((selection.start.row == selection.end.row) and
+        (selection.start.column == selection.end.column))
+      shape.style.fill = cursorColor shape.style.fill
+    else
+      shape.style.fill = selectedColor shape.style.fill
 
   if shape.line
     drawLine(canvas, shape)
