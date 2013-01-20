@@ -10,6 +10,7 @@ drawLine = (canvas, shape) ->
   line = canvas.path(path)
   line.attr(shape.style)
 
+
 drawRectangle = (canvas, shape) ->
   rect = canvas.rect(shape.rectangle.topLeft[0],
                      shape.rectangle.topLeft[1],
@@ -17,11 +18,13 @@ drawRectangle = (canvas, shape) ->
                      shape.rectangle.height)
   rect.attr(shape.style)
 
+
 drawCircle = (canvas, shape) ->
   circle = canvas.circle(shape.circle.center[0],
                          shape.circle.center[1],
                          shape.circle.radius)
   circle.attr(shape.style)
+
 
 drawPolygon = (canvas, shape) ->
   path =
@@ -29,6 +32,7 @@ drawPolygon = (canvas, shape) ->
     ("L#{point[0]},#{point[1]}" for point in shape.polygon[1...]).join("")
   polygon = canvas.path(path)
   polygon.attr(shape.style)
+
 
 drawSpline = (canvas, shape) ->
   current = shape.spline[0]
@@ -44,7 +48,30 @@ drawSpline = (canvas, shape) ->
   spline = canvas.path(path)
   spline.attr(shape.style)
 
-drawShape = (canvas, shape) ->
+
+selectedColor = (color) ->
+  r = Math.round(parseInt(color.substring(1,3), 16) * 0.75)
+  g = Math.round(parseInt(color.substring(3,5), 16) * 0.75)
+  b = Math.round(parseInt(color.substring(5,7), 16) * 1.00)
+  ("#" +
+   ("0" + r.toString(16))[-2..] +
+   ("0" + g.toString(16))[-2..] +
+   ("0" + b.toString(16))[-2..])
+
+
+drawShape = (canvas, shape, selection) ->
+  selected = (selection and
+              ((shape.action.textRow > selection.start.row) or
+               ((shape.action.textRow == selection.start.row) and
+                (shape.action.textColumn >= selection.start.column))) and
+              ((shape.action.textRow < selection.end.row) or
+               ((shape.action.textRow == selection.end.row) and
+                (shape.action.textColumn <= selection.end.column))))
+  if selected
+    shape = _.clone shape
+    shape.style = _.clone shape.style
+    shape.style.fill = selectedColor shape.style.fill
+
   if shape.line
     drawLine(canvas, shape)
   else if shape.rectangle
@@ -58,6 +85,7 @@ drawShape = (canvas, shape) ->
   else
     console.warn(shape)
 
+
 containsPoint = (shape, x, y) ->
   if shape.rectangle
     left = shape.rectangle.topLeft[0]
@@ -68,12 +96,14 @@ containsPoint = (shape, x, y) ->
       return true
   false
 
+
 #
 # Shape construction functions
 #
 
 scaleAndTranslatePoint = (point, x, y, width, height) ->
   [point[0] * width + x, point[1] * height + y]
+
 
 scaleAndTranslate = (shape, x, y, width, height) ->
   if shape.line
@@ -102,6 +132,7 @@ scaleAndTranslate = (shape, x, y, width, height) ->
   else
     console.warn(shape)
     {}
+
 
 class Graphic
   constructor: (chart, maxWidth, maxHeight) ->
@@ -147,16 +178,19 @@ class Graphic
             @graphic.shapes.push(newShape)
           column = column + action.width
 
-  draw: (canvas) =>
+
+  draw: (canvas, selection) =>
     canvas.clear()
     for shape in @graphic.shapes
-      drawShape(canvas, shape)
+      drawShape(canvas, shape, selection)
+
 
   _shapeAtPoint: (x, y) =>
     for shape in @graphic.shapes
       if containsPoint(shape, x, y)
         return shape
     undefined
+
 
   actionAtPoint: (x, y) =>
     @_shapeAtPoint(x, y)?.action

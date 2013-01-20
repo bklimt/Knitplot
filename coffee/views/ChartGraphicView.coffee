@@ -3,8 +3,8 @@ class ChartGraphicView extends Parse.View
   initialize: =>
     @model = @options.model
     @parser = @options.parser
+    @model.on "change:selection", @onChangeSelection
     @parser.on "change:chart", @onChangeChart
-    @$el.on "blur", @onCanvasBlur
     @$el.on "mousedown", @onCanvasMouseDown
     @$el.on "mousemove", @onCanvasMouseMove
     @$el.on "mouseup", @onCanvasMouseUp
@@ -12,11 +12,15 @@ class ChartGraphicView extends Parse.View
     @render()
 
 
+  onChangeSelection: =>
+    @onChangeChart()
+
+
   onChangeChart: =>
     chart = @parser.get "chart"
     if chart
       @graphic = new Graphic chart, @canvas.width, @canvas.height
-      @graphic.draw @canvas
+      @graphic.draw @canvas, @model.get "selection"
 
 
   onCanvasMouseDown: (event) =>
