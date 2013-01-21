@@ -1,23 +1,65 @@
 
 class ChartListView extends Parse.View
-  events:
-    "click #new": "onClickNew"
-
-  initialize: =>
-    @start = @options.start
+  initialize: ->
+    @start = @start || 0
+    @query = new Parse.Query(Chart)
+    @charts = @query.collection()
     @render()
+    @fetch()
+    knitplot.on "change:chart", @onChangeChart
+
+
+  onChangeChart: =>
+    knitplot.get("chart")?.on "save", @onSaveChart
+
+
+  onSaveChart: =>
+    @fetch()
+
 
   onClickNew: =>
     knitplot.newChart()
 
-  render: =>
-    template = $("#chart-list-template").html()
-    $(@el).html _.template(template)
-      collection: @collection.first(10)
+
+  onClickNext: =>
+    @start = @start + 10
+    @fetch()
+
+
+  onClickPrevious: =>
+    @start = @start - 10
+    if @start < 0
+      @start = 0
+    @fetch()
+
+
+  fetch: ->
+    $('#spinner').show()
+    $("#previous").hide()
+    $("#next").hide()
+    @query.equalTo "creator", Parse.User.current()
+    @query.descending("updatedAt", "createdAt").skip(@start).limit(11)
+    @charts.fetch
+      success: =>
+        @renderList()
+        $('#spinner').hide()
+      error: (charts, error) ->
+        new ErrorView({ message: "Unable to load chart list." })
+
+
+  renderList: ->
+    @$el.html _.template(@template)
+      collection: @charts.first(10)
       start: @start
       previous: @start - 10
-      next: if @collection.size() > 10 then @start + 10 else 0
+      next: if @charts.size() > 10 then @start + 10 else 0
     $("#leftbar").html(@el)
-    $("#new").button()
-    @delegateEvents()
+    $("#new").button().on("click", @onClickNew)
+    $("#next").button().on("click", @onClickNext)
+    $("#previous").button().on("click", @onClickPrevious)
+
+
+  render: ->
+    @template = $("#chart-list-template").html()
+    @renderList()
 

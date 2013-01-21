@@ -17,8 +17,9 @@ class LoggedInView extends Parse.View
     @delegateEvents()
 
   logOut: =>
-    Parse.User.logOut()
     new ConfirmationView
       message: "Are you sure you want to log out?"
       yes: ->
-        new LoggedOutView()
+        Parse.User.logOut()
+        knitplot.set "user", Parse.User.current()
+

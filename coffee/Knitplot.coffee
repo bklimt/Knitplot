@@ -1,80 +1,78 @@
 
-class Knitplot
-  init: =>
-    @start = 0
-    @chart = new Chart()
-
+class Knitplot extends Backbone.Model
+  initialize: ->
     Parse.initialize(
         "732uFxOqiBozGHcv6BUyEZrpQC0oIbmTbi4UJuK2",
         "JB48tpHfZ39NTwrRuQIoqq7GQzpdxLonrjpsj67L")
-    new Router()
-    Backbone.history.start()
+
     $(window).bind('beforeunload', @confirmUnloadMessage)
 
-  newChart: (start) =>
-    @chart = new Chart
+    @set "loading", true
+    @on "change:chart", @onChangeChart
+
+    query = new Parse.Query Library
+    query.find
+      success: (results) =>
+        @set
+          loading: false
+          libraries: results
+          defaultLibrary: results[0]
+
+        new UserView()
+        new ChartListView()
+        new ChartEditView()
+
+        new Router()
+        Backbone.history.start()
+
+      error: (error) ->
+        console.log "Unable to load library. Error #{error.code}: #{error.message}"
+
+
+  onChangeChart: =>
+    if @get("chart")?.id
+      Backbone.history.navigate("##{@get("chart").id}", { replace: true })
+    else
+      Backbone.history.navigate("", { replace: true })
+
+
+  newChart: (force) ->
+    if (not force) and @get("chart")?.dirty()
+      @confirmUnload
+        yes: => @newChart(true)
+      return
+
+    @set "chart", new Chart
       title: "Untitled"
       text: "k2,p3\nyo4,k2tog"
-    if start
-      @start = start
+      library: @get "defaultLibrary"
 
-    @listCharts(@start)
-    @showUser()
-    new ChartEditView(model: @chart)
-    @fixHistory()
 
-  editChart: (id, start) =>
+  editChart: (id, force) ->
+    if (not force) and @get("chart")?.dirty()
+      @confirmUnload
+        yes: => @editChart(id, true)
+      return
+
+    @unset "chart"
+
     if id == "new"
-      return @newChart(start)
+      return @newChart()
 
-    @chart = new Chart({ objectId: id })
-    if start
-      @start = start
+    chart = new Chart({ objectId: id })
 
-    @chart.fetch
+    chart.fetch
       success: =>
-        new ChartEditView(model: @chart)
+        chart.get("library").fetch
+          success: =>
+            @set "chart", chart
+          error: (library, error) ->
+            new ErrorView({ message: "Unable to load library for chart." })
+            window.location.hash = "#"
       error: (chart, error) ->
         new ErrorView({ message: "Unable to load chart." })
         window.location.hash = "#"
-    @listCharts(@start)
-    @showUser()
 
-  saveChart: () =>
-    if !knitplot.chart.get "creator"
-      knitplot.chart.set "creator", Parse.User.current()
-    knitplot.chart.save
-      success: =>
-        new SuccessView({ message: "Saved!" })
-        @listCharts(0)
-        @fixHistory()
-      error: =>
-        new ErrorView({ message: "Unable to save." })
-
-  listCharts: (start = 0) =>
-    @start = start
-    query = new Parse.Query(Chart)
-    query.equalTo "creator", Parse.User.current()
-    query.descending("updatedAt", "createdAt").skip(start).limit(11)
-    charts = query.collection()
-    charts.fetch
-      success: =>
-        new ChartListView(collection: charts, start: parseInt(start))
-      error: (charts, error) ->
-        new ErrorView({ message: "Unable to load chart list." })
-    @fixHistory()
-
-  showUser: =>
-    if Parse.User.current()
-      new LoggedInView()
-    else
-      new LoggedOutView()
-
-  fixHistory: =>
-    if @chart.isNew()
-      Backbone.history.navigate("#chart/new/#{@start}", { replace: true })
-    else
-      Backbone.history.navigate("#chart/#{@chart.id}/#{@start}", { replace: true })
 
   confirmUnload: (options) =>
     message = @confirmUnloadMessage()
@@ -87,10 +85,11 @@ class Knitplot
       if options.yes
         options.yes()
 
+
   confirmUnloadMessage: =>
-    if @chart.dirty("text") or @chart.dirty("title")
+    if @get("chart")?.dirty()
       "Your chart has not been saved."
 
-# Export symbols
-window.knitplot = new Knitplot()
+
+window.Knitplot = Knitplot
 

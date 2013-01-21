@@ -5,14 +5,18 @@
 
 class ChartEditView extends Parse.View
   events:
-    "submit form": "onSaveButton"
-    "click #svg": "onSVGButton"
     "keyup input": "onKeyUpTitle"
 
+
   initialize: =>
-    @model = @options.model
-    @model.edit()
+    knitplot.on "change:chart", @onChangeChart
     @render()
+
+ 
+  onChangeChart: =>
+    knitplot.get("chart")?.edit()
+    @render()
+
 
   onSVGButton: =>
     svg = $("#chart").html()
@@ -21,59 +25,66 @@ class ChartEditView extends Parse.View
       url: url
     false
 
+
   onSaveButton: =>
     if !Parse.User.current()
       new NeedToSignUpView()
       return false
-    attrs =
+    knitplot.get("chart").save
       creator: Parse.User.current()
-      title: @$('#title').val()
-      text: @$('#text').val()
-    options =
-      error: =>
-        new ErrorView({ message: "Unable to set title and text." })
-    if @model.set(attrs, options)
-      knitplot.saveChart()
+    ,
+      success: (chart) =>
+        chart.trigger "save"
+        $("#save").button({ label: "Save" })
+        new SuccessView({ message: "Saved!" })
+      error: => new ErrorView({ message: "Unable to save." })
     false
+
 
   onKeyUpTitle: =>
     title = @$('#title').val()
-    if title != (@model.get('title') or "")
-      @model.set
+    if title != (knitplot.get("chart").get("title") or "")
+      knitplot.get("chart").set
         title: title
       ,
         error: =>
           new ErrorView({ message: "Unable to set title." })
 
+
   onChangeTitle: =>
-    title = @model.get("title") or ""
+    title = knitplot.get("chart").get("title") or ""
     if @titleEdit.val() != title
       @titleEdit.val(title)
 
+
   render: =>
+    if not knitplot.get("chart")
+      new ChartLoadingView()
+      return
+
     template = $("#chart-template").html()
-    $(@el).html(_.template(template)({ model: @model }))
+    $(@el).html(_.template(template)({ model: knitplot.get("chart") }))
     $("#app").html @el
-    $("#save").button()
-    $("#svg").button()
+    $("#save").button().on "click", @onSaveButton
+    $("#svg").button().on "click", @onSVGButton
 
     @titleEdit = @$("#title")
     @onChangeTitle()
 
     graphic = new ChartGraphicView
       el: @$('#chart').get(0)
-      model: @model
+      model: knitplot.get "chart"
 
     text = new ChartTextView
       el: $("#text").get(0)
-      model: @model
+      model: knitplot.get "chart"
 
     # When the graphic is used ot make a selection, focus the text field.
     graphic.$el.on "mouseup", ->
       text.focus()
 
     new ParseErrorsView
-      model: @model
+      model: knitplot.get "chart"
 
     @delegateEvents()
 

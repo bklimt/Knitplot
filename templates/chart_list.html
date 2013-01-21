@@ -1,17 +1,27 @@
 <script type="text/template" id="chart-list-template">
-  <button id="new">New Chart</button>
+  <table>
+    <tr>
+      <td>
+        <button id="new">New Chart</button>
+      </td>
+      <td>
+        <img id="spinner" src="images/spinner.gif" style="width: 20px; height: 20px" />
+      </td>
+    </tr>
+  </table>
   <ul>
     <% _.each(collection, function(item) { %>
-      <li><a href="#chart/<%= item.id %>"><%= item.escape('title') %></a></li>
+      <li><a href="javascript:knitplot.editChart('<%= item.id %>')"><%= item.escape('title') %></a></li>
     <% }); %>
   </ul>
   <% if (start > 0) { %>
-    <a href="#charts/<%= previous %>">Previous</a>
-  <% } %>
-  <% if (start > 0 && next > 0) { %>
-    |
+    <div id="previous">
+      <span class="ui-icon ui-icon-seek-first"></span>
+    </div>
   <% } %>
   <% if (next > 0) { %>
-    <a href="#charts/<%= next %>">Next</a>
+    <div id="next">
+      <span class="ui-icon ui-icon-seek-end"></span>
+    </div>
   <% } %>
 </script>

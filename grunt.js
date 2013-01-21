@@ -5,7 +5,6 @@ module.exports = function(grunt) {
     coffee: {
       knitplot: {
         files: [
-          "coffee/Library.coffee",
           "coffee/Router.coffee",
           "coffee/Knitplot.coffee",
 
@@ -13,6 +12,7 @@ module.exports = function(grunt) {
           "coffee/models/Chart.coffee",
           "coffee/models/ChartParser.coffee",
           "coffee/models/Graphic.coffee",
+          "coffee/models/Library.coffee",
           
           // Notification views.
           "coffee/views/NotificationView.coffee",
@@ -21,6 +21,7 @@ module.exports = function(grunt) {
           "coffee/views/ErrorView.coffee",
 
           // User views.
+          "coffee/views/UserView.coffee",
           "coffee/views/LoggedInView.coffee",
           "coffee/views/LoggedOutView.coffee",
           "coffee/views/LogInView.coffee",
@@ -28,6 +29,7 @@ module.exports = function(grunt) {
           "coffee/views/SignUpView.coffee",
 
           // Chart editing views.
+          "coffee/views/ChartLoadingView.coffee",
           "coffee/views/ChartEditView.coffee",
           "coffee/views/ChartGraphicView.coffee",
           "coffee/views/ChartListView.coffee",

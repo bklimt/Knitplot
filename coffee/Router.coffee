@@ -2,26 +2,11 @@
 class Router extends Backbone.Router
   routes:
     "": "newChart"
-    "new" : "newChart"
-    "new/:start" : "newChart"
-    "chart/:id": "editChart"
-    "chart/:id/:start": "editChart"
-    "charts/:start": "listCharts"
+    ":id": "editChart"
 
-  newChart: (start) =>
-    knitplot.confirmUnload
-      yes: ->
-        knitplot.newChart(start)
-      no: ->
-        knitplot.fixHistory()
+  newChart: () =>
+    knitplot.newChart()
 
-  editChart: (id, start) =>
-    knitplot.confirmUnload
-      yes: ->
-        knitplot.editChart(id, start)
-      no: ->
-        knitplot.fixHistory()
-
-  listCharts: (start = 0) =>
-    knitplot.listCharts(start)
+  editChart: (id) =>
+    knitplot.editChart(id)
 

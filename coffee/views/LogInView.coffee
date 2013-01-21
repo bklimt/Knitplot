@@ -17,10 +17,11 @@ class LogInView extends Parse.View
   logIn: =>
     Parse.User.logIn $('#email').val(), $('#password').val(),
       success: =>
-        $(@el).remove()
-        new LoggedInView()
+        @$el.remove()
+        knitplot.set "user", Parse.User.current()
       error: (user, error) =>
         alert(error.message)
+        knitplot.set "user", Parse.User.current()
 
   cancel: =>
     $(@el).remove()

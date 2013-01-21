@@ -23,10 +23,11 @@ app.get("/js/knitplot.js", function(request, response) {
   });
 });
 
-app.get(/^(\/(css|js)\/(.*)\.(css|js|png))$/, function(request, response) {
+app.get(/^(\/(css|js|images)\/(.*)\.(css|js|png|gif))$/, function(request, response) {
   var path = "." + request.params[0];
   var type = {
     css: "text/css",
+    gif: "image/gif",
     png: "image/png",
     js: "application/javascript"
   }[request.params[3]] || "text/plain";

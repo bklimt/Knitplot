@@ -36,6 +36,8 @@ class ChartParser
       @offset++
 
   _parseAction: ->
+    library = @chart.get("library").get("data")
+
     @_eatWhitespace()
     start = @offset
     @tokenLength = 0
@@ -67,8 +69,8 @@ class ChartParser
     
     defaults = { width: 1, repetitions: 1 }
     found = false
-    if Library[text]
-      action = _.extend(defaults, Library[text], action)
+    if library[text]
+      action = _.extend(defaults, library[text], action)
       found = true
     else
       # Maybe this is like t2r -> t#r.
@@ -76,14 +78,14 @@ class ChartParser
       if match
         [match, prefix, number, suffix] = match
         altText = "#{prefix}##{suffix}"
-        if match and Library[altText]
-          action = _.extend(defaults, Library[altText], action)
+        if match and library[altText]
+          action = _.extend(defaults, library[altText], action)
           action.action = altText
           action.width = action.width * parseInt(number)
           found = true
     if not found
       @_addMessage(@errors, "Unknown action type: \"#{text}\".")
-      action = _.extend(defaults, Library.error, action, { action: "error" })
+      action = _.extend(defaults, library.error, action, { action: "error" })
     return action
 
   _parseRow: ->
