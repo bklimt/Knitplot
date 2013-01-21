@@ -1195,13 +1195,17 @@
         new NeedToSignUpView();
         return false;
       }
+      $("#save").button({
+        disabled: true
+      });
       knitplot.get("chart").save({
         creator: Parse.User.current()
       }, {
         success: function(chart) {
           chart.trigger("save");
           $("#save").button({
-            label: "Save"
+            label: "Save",
+            disabled: false
           });
           return new SuccessView({
             message: "Saved!"
@@ -1439,8 +1443,8 @@
     ChartListView.prototype.fetch = function() {
       var _this = this;
       $('#spinner').show();
-      $("#previous").hide();
-      $("#next").hide();
+      $("#previous").button("disable");
+      $("#next").button("disable");
       this.query.equalTo("creator", Parse.User.current());
       this.query.descending("updatedAt", "createdAt").skip(this.start).limit(11);
       return this.charts.fetch({

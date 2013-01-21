@@ -30,12 +30,14 @@ class ChartEditView extends Parse.View
     if !Parse.User.current()
       new NeedToSignUpView()
       return false
+
+    $("#save").button({ disabled: true })
     knitplot.get("chart").save
       creator: Parse.User.current()
     ,
       success: (chart) =>
         chart.trigger "save"
-        $("#save").button({ label: "Save" })
+        $("#save").button({ label: "Save", disabled: false })
         new SuccessView({ message: "Saved!" })
       error: => new ErrorView({ message: "Unable to save." })
     false

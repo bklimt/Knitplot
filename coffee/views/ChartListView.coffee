@@ -35,8 +35,8 @@ class ChartListView extends Parse.View
 
   fetch: ->
     $('#spinner').show()
-    $("#previous").hide()
-    $("#next").hide()
+    $("#previous").button("disable")
+    $("#next").button("disable")
     @query.equalTo "creator", Parse.User.current()
     @query.descending("updatedAt", "createdAt").skip(@start).limit(11)
     @charts.fetch
