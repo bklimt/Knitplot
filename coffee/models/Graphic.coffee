@@ -3,6 +3,12 @@
 # Shape drawing functions
 #
 
+svgStyle = (style) ->
+  ("style=\"fill:#{style.fill};" +
+   "stroke:#{style.stroke};" +
+   "stroke-width:#{style["stroke-width"]}\"")
+
+
 drawLine = (canvas, shape) ->
   path =
     "M#{shape.line.point1[0]},#{shape.line.point1[1]}" +
@@ -10,6 +16,14 @@ drawLine = (canvas, shape) ->
   line = canvas.path(path)
   line.attr(shape.style)
 
+
+svgLine = (shape) ->
+  ("<line x1=\"#{shape.line.point1[0]}\" " +
+         "y1=\"#{shape.line.point1[1]}\" " +
+         "x2=\"#{shape.line.point2[0]}\" " +
+         "y2=\"#{shape.line.point2[1]}\" " +
+         "#{svgStyle(shape.style)} />\n")
+  
 
 drawRectangle = (canvas, shape) ->
   rect = canvas.rect(shape.rectangle.topLeft[0],
@@ -19,11 +33,26 @@ drawRectangle = (canvas, shape) ->
   rect.attr(shape.style)
 
 
+svgRectangle = (shape) ->
+  ("<rect x=\"#{shape.rectangle.topLeft[0]}\" " +
+         "y=\"#{shape.rectangle.topLeft[1]}\" " +
+     "width=\"#{shape.rectangle.width}\" " +
+    "height=\"#{shape.rectangle.height}\" " +
+             "#{svgStyle(shape.style)} />\n")
+ 
+
 drawCircle = (canvas, shape) ->
   circle = canvas.circle(shape.circle.center[0],
                          shape.circle.center[1],
                          shape.circle.radius)
   circle.attr(shape.style)
+
+
+svgCircle = (shape) ->
+  ("<circle cx=\"#{shape.circle.center[0]}\" " +
+           "cy=\"#{shape.circle.center[1]}\" " +
+            "r=\"#{shape.circle.radius}\" " +
+                "#{svgStyle(shape.style)} />\n")
 
 
 drawPolygon = (canvas, shape) ->
@@ -33,6 +62,12 @@ drawPolygon = (canvas, shape) ->
   polygon = canvas.path(path)
   polygon.attr(shape.style)
 
+
+svgPolygon = (shape) ->
+  ("<polygon points=\"" +
+   ("#{point[0]},#{point[1]}" for point in shape.polygon).join(" ") + "\" " +
+   "#{svgStyle(shape.style)} />\n")
+  
 
 drawSpline = (canvas, shape) ->
   current = shape.spline[0]
@@ -47,6 +82,20 @@ drawSpline = (canvas, shape) ->
   path = "#{path} L#{next[0]},#{next[1]}"
   spline = canvas.path(path)
   spline.attr(shape.style)
+
+
+svgSpline = (shape) ->
+  current = shape.spline[0]
+  next = shape.spline[1]
+  c = [ (current[0] + next[0]) / 2, (current[1] + next[1]) / 2 ]
+  path = "M#{current[0]},#{current[1]}L#{c[0]},#{c[1]}"
+  _.each shape.spline[2...], (point) ->
+    current = next
+    next = point
+    c = [ (current[0] + next[0]) / 2, (current[1] + next[1]) / 2 ]
+    path = "#{path} Q#{current[0]},#{current[1]} #{c[0]},#{c[1]}"
+  path = "#{path} L#{next[0]},#{next[1]}"
+  "<path d=\"#{path}\" #{svgStyle(shape.style)} />\n"
 
 
 cursorColor = (color) ->
@@ -119,6 +168,22 @@ drawShape = (canvas, shape, selection) ->
     drawSpline(canvas, shape)
   else
     console.warn(shape)
+
+
+svgShape = (shape) ->
+  if shape.line
+    svgLine(shape)
+  else if shape.rectangle
+    svgRectangle(shape)
+  else if shape.circle
+    svgCircle(shape)
+  else if shape.polygon
+    svgPolygon(shape)
+  else if shape.spline
+    svgSpline(shape)
+  else
+    console.warn(shape)
+  
 
 
 containsPoint = (shape, x, y) ->
@@ -214,10 +279,33 @@ class Graphic
           column = column + action.width
 
 
-  draw: (canvas, selection) =>
+  @fromAction: (action, maxWidth, maxHeight) ->
+    action = _.clone action
+    action.repetitions ||= 1
+    action.width ||= 1
+    return new Graphic([[action]], maxHeight, maxHeight)
+
+
+  draw: (canvas, selection) ->
     canvas.clear()
     for shape in @graphic.shapes
       drawShape(canvas, shape, selection)
+
+
+  svg: ->
+    svg = ("<svg width=\"#{@graphic.width}\" " +
+               "height=\"#{@graphic.height}\" " +
+               "version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">\n")
+    for shape in @graphic.shapes
+      svg = "#{svg}#{svgShape(shape)}"
+    svg = "#{svg}\n<svg />"
+
+
+  svgFile: ->
+    ("<?xml version=\"1.0\" standalone=\"no\"?>\n" +
+     "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" " +
+     "\"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" +
+     @svg())
 
 
   _shapeAtPoint: (x, y) =>
@@ -230,3 +318,5 @@ class Graphic
   actionAtPoint: (x, y) =>
     @_shapeAtPoint(x, y)?.action
 
+
+window.Graphic = Graphic

@@ -160,6 +160,9 @@ button {
     height: 350px;
 }
 
+#library {
+}
+
 .CodeMirror {
     border: solid black 1px;
     margin: 5px;
@@ -168,9 +171,9 @@ button {
 }
 
 .cm-s-solarized.cm-s-light .CodeMirror-selected {
-  background: #d7d4f0;
-  /*background: #eee8d5;*/
-  color: inherit;
+    background: #d7d4f0;
+    /*background: #eee8d5;*/
+    color: inherit;
 }
 
 .error-mark {

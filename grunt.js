@@ -35,6 +35,7 @@ module.exports = function(grunt) {
           "coffee/views/ChartListView.coffee",
           "coffee/views/ParseErrorsView.coffee",
           "coffee/views/ChartTextView.coffee",
+          "coffee/views/LibraryView.coffee",
 
           // Other dialogs.
           "coffee/views/SVGPreviewView.coffee"

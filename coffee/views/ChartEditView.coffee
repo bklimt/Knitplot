@@ -73,8 +73,12 @@ class ChartEditView extends Parse.View
     @titleEdit = @$("#title")
     @onChangeTitle()
 
+    library = new LibraryView
+      el: @$("#library").get(0)
+      chart: knitplot.get "chart"
+
     graphic = new ChartGraphicView
-      el: @$('#chart').get(0)
+      el: @$("#chart").get(0)
       model: knitplot.get "chart"
 
     text = new ChartTextView
