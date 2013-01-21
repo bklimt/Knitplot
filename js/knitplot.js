@@ -22,7 +22,7 @@
     };
 
     Router.prototype.newChart = function() {
-      return knitplot.newChart();
+      return knitplot.defaultChart();
     };
 
     Router.prototype.editChart = function(id) {
@@ -84,6 +84,38 @@
           replace: true
         });
       }
+    };
+
+    Knitplot.prototype.defaultChart = function(force) {
+      var query, _ref,
+        _this = this;
+      if ((!force) && ((_ref = this.get("chart")) != null ? _ref.dirty() : void 0)) {
+        this.confirmUnload({
+          yes: function() {
+            return _this.defaultChart(true);
+          }
+        });
+        return;
+      }
+      this.unset("chart");
+      query = new Parse.Query(Chart);
+      query.equalTo("creator", Parse.User.current());
+      query.descending("updatedAt", "createdAt").skip(this.start).limit(1);
+      query.include("library");
+      return query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            return _this.set("chart", results[0]);
+          } else {
+            return _this.newChart(true);
+          }
+        },
+        error: function(error) {
+          return new ErrorNotificationView({
+            message: "Unable to load chart. Error " + error.code + ": " + error.message + "."
+          });
+        }
+      });
     };
 
     Knitplot.prototype.newChart = function(force) {

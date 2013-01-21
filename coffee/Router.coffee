@@ -5,7 +5,7 @@ class Router extends Backbone.Router
     ":id": "editChart"
 
   newChart: () =>
-    knitplot.newChart()
+    knitplot.defaultChart()
 
   editChart: (id) =>
     knitplot.editChart(id)

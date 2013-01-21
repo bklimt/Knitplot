@@ -36,6 +36,28 @@ class Knitplot extends Backbone.Model
       Backbone.history.navigate("", { replace: true })
 
 
+  defaultChart: (force) ->
+    if (not force) and @get("chart")?.dirty()
+      @confirmUnload
+        yes: => @defaultChart(true)
+      return
+
+    @unset "chart"
+    query = new Parse.Query(Chart)
+    query.equalTo "creator", Parse.User.current()
+    query.descending("updatedAt", "createdAt").skip(@start).limit(1)
+    query.include "library"
+    query.find
+      success: (results) =>
+        if results.length > 0
+          @set "chart", results[0]
+        else
+          @newChart(true)
+      error: (error) ->
+        new ErrorNotificationView
+          message: "Unable to load chart. Error #{error.code}: #{error.message}."
+    
+
   newChart: (force) ->
     if (not force) and @get("chart")?.dirty()
       @confirmUnload
