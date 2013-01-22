@@ -1,8 +1,17 @@
 script#library-template(type="text/template")
   table
     tr
-      td(colspan=14) <%= name %>
-      |    <% i = 0; _.each(actions, function(action, name) { %>
+      td(colspan=14)
+        select#library-select
+          |    <% _.each(libraries, function(aLibrary) { %>
+          |      <% var selected = (aLibrary.id == library.id); %>
+          |      <% selected = selected ? "selected=\"selected\"" : ""; %>
+          |      <option value="<%= aLibrary.id %>" <%= selected %>>
+          |        <%= aLibrary.get("name") %>
+          |      </option>
+          |    <% }); %>
+      |    <% var i = 0; %>
+      |    <% _.each(library.get("data"), function(action, name) { %>
       |      <td style="padding-left: 5px; padding-top: 5px">
       |        <%= Graphic.fromAction(action, 32, 32).svg() %>
       |      </td>

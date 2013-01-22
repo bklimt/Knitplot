@@ -2,13 +2,17 @@
 class ChartParser
   constructor: (@chart) ->
     @chart.on "change:text", @onChangeText
+    @chart.on "change:library", @onChangeLibrary
     @onChangeText()
 
-  onChangeText: () =>
-    @_parse @chart.get "text"
+  onChangeText: =>
+    @_parse()
 
-  _parse: (text) ->
-    @text = text
+  onChangeLibrary: =>
+    @_parse()
+
+  _parse: ->
+    @text = @chart.get "text"
     @line = 0
     @lineStart = 0
     @tokenLength = 1

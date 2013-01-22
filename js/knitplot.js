@@ -241,19 +241,26 @@
 
     function ChartParser(chart) {
       this.chart = chart;
+      this.onChangeLibrary = __bind(this.onChangeLibrary, this);
+
       this.onChangeText = __bind(this.onChangeText, this);
 
       this.chart.on("change:text", this.onChangeText);
+      this.chart.on("change:library", this.onChangeLibrary);
       this.onChangeText();
     }
 
     ChartParser.prototype.onChangeText = function() {
-      return this._parse(this.chart.get("text"));
+      return this._parse();
     };
 
-    ChartParser.prototype._parse = function(text) {
+    ChartParser.prototype.onChangeLibrary = function() {
+      return this._parse();
+    };
+
+    ChartParser.prototype._parse = function() {
       var actions;
-      this.text = text;
+      this.text = this.chart.get("text");
       this.line = 0;
       this.lineStart = 0;
       this.tokenLength = 1;
@@ -1739,22 +1746,49 @@
     __extends(LibraryView, _super);
 
     function LibraryView() {
+      this.onChangeLibrarySelect = __bind(this.onChangeLibrarySelect, this);
+
+      this.onChangeLibraries = __bind(this.onChangeLibraries, this);
+
+      this.onChangeLibrary = __bind(this.onChangeLibrary, this);
       return LibraryView.__super__.constructor.apply(this, arguments);
     }
 
     LibraryView.prototype.initialize = function() {
       this.render;
-      this.library = this.options.chart.get("library");
+      this.chart = this.options.chart;
+      this.render();
+      this.chart.on("change:library", this.onChangeLibrary);
+      return knitplot.on("change:libraries", this.onChangeLibraries);
+    };
+
+    LibraryView.prototype.onChangeLibrary = function() {
       return this.render();
+    };
+
+    LibraryView.prototype.onChangeLibraries = function() {
+      return this.render();
+    };
+
+    LibraryView.prototype.onChangeLibrarySelect = function() {
+      var libraryId,
+        _this = this;
+      libraryId = this.$("#library-select option:selected").attr("value");
+      return _.each(knitplot.get("libraries"), function(library) {
+        if (library.id === libraryId) {
+          return _this.chart.set("library", library);
+        }
+      });
     };
 
     LibraryView.prototype.render = function() {
       var template;
       template = _.template($("#library-template").html());
-      return this.$el.html(template({
-        name: this.library.get("name"),
-        actions: this.library.get("data")
+      this.$el.html(template({
+        libraries: knitplot.get("libraries"),
+        library: this.chart.get("library")
       }));
+      return this.$("#library-select").on("change", this.onChangeLibrarySelect);
     };
 
     return LibraryView;
