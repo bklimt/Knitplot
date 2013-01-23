@@ -10,11 +10,8 @@ class ChartListView extends Parse.View
 
 
   onChangeChart: =>
-    knitplot.get("chart")?.on "save", @onSaveChart
-
-
-  onSaveChart: =>
-    @fetch()
+    knitplot.get("chart")?.on "save", @fetch
+    knitplot.get("chart")?.on "destroy", @fetch
 
 
   onClickNew: =>
@@ -33,7 +30,7 @@ class ChartListView extends Parse.View
     @fetch()
 
 
-  fetch: ->
+  fetch: =>
     $('#spinner').show()
     $("#previous").button("disable")
     $("#next").button("disable")

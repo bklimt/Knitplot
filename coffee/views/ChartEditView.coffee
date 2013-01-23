@@ -14,7 +14,13 @@ class ChartEditView extends Parse.View
 
  
   onChangeChart: =>
-    knitplot.get("chart")?.edit()
+    chart = knitplot.get "chart"
+    if chart
+      chart.edit()
+      if chart.id
+        $("#delete").button().show()
+      else
+        $("#delete").button().hide()
     @render()
 
 
@@ -38,8 +44,25 @@ class ChartEditView extends Parse.View
       success: (chart) =>
         chart.trigger "save"
         $("#save").button({ label: "Save", disabled: false })
+        $("#delete").button().show()
         new SuccessView({ message: "Saved!" })
       error: => new ErrorView({ message: "Unable to save." })
+    false
+
+
+  onDeleteButton: =>
+    if not knitplot.get("chart").id
+      return
+    new ConfirmationView
+      message: "Are you sure you want to delete this chart?"
+      yes: =>
+        knitplot.get("chart").destroy
+          success: =>
+            knitplot.unset "chart"
+            $("#save").button().hide()
+            new SuccessView({ message: "Deleted the chart." })
+            setTimeout((-> knitplot.defaultChart()), 2000)
+          error: => new ErrorView({ message: "Failed to delete chart." })
     false
 
 
@@ -69,6 +92,10 @@ class ChartEditView extends Parse.View
     $("#app").html @el
     $("#save").button().on "click", @onSaveButton
     $("#svg").button().on "click", @onSVGButton
+    $("#delete").button().on "click", @onDeleteButton
+
+    if not knitplot.get("chart").id
+      $("#delete").button().hide()
 
     @titleEdit = @$("#title")
     @onChangeTitle()

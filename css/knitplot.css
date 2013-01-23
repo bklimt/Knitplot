@@ -53,10 +53,14 @@ ul {
     margin: 0;
 }
 
-ul li a {
+ul li {
     display: block;
     padding: 10px;
     border-bottom: 1px solid #eee;
+}
+
+ul li:last-child {
+    border-bottom: none;
 }
 
 ul li a:hover {
@@ -118,7 +122,7 @@ select {
 }
 
 #leftbar {
-    width: 150px;
+    width: 180px;
     height: 100%;
     background-color: #f6a828;
     border-radius: 5px;
@@ -219,9 +223,10 @@ select {
 }
 
 #svg {
-  margin: 5px;
+    margin: 5px;
 }
 
 #save {
-  margin: 5px;
+    margin: 5px;
 }
+

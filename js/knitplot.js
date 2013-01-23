@@ -1243,6 +1243,8 @@
 
       this.onKeyUpTitle = __bind(this.onKeyUpTitle, this);
 
+      this.onDeleteButton = __bind(this.onDeleteButton, this);
+
       this.onSaveButton = __bind(this.onSaveButton, this);
 
       this.onSVGButton = __bind(this.onSVGButton, this);
@@ -1263,9 +1265,15 @@
     };
 
     ChartEditView.prototype.onChangeChart = function() {
-      var _ref;
-      if ((_ref = knitplot.get("chart")) != null) {
-        _ref.edit();
+      var chart;
+      chart = knitplot.get("chart");
+      if (chart) {
+        chart.edit();
+        if (chart.id) {
+          $("#delete").button().show();
+        } else {
+          $("#delete").button().hide();
+        }
       }
       return this.render();
     };
@@ -1298,6 +1306,7 @@
             label: "Save",
             disabled: false
           });
+          $("#delete").button().show();
           return new SuccessView({
             message: "Saved!"
           });
@@ -1305,6 +1314,36 @@
         error: function() {
           return new ErrorView({
             message: "Unable to save."
+          });
+        }
+      });
+      return false;
+    };
+
+    ChartEditView.prototype.onDeleteButton = function() {
+      var _this = this;
+      if (!knitplot.get("chart").id) {
+        return;
+      }
+      new ConfirmationView({
+        message: "Are you sure you want to delete this chart?",
+        yes: function() {
+          return knitplot.get("chart").destroy({
+            success: function() {
+              knitplot.unset("chart");
+              $("#save").button().hide();
+              new SuccessView({
+                message: "Deleted the chart."
+              });
+              return setTimeout((function() {
+                return knitplot.defaultChart();
+              }), 2000);
+            },
+            error: function() {
+              return new ErrorView({
+                message: "Failed to delete chart."
+              });
+            }
           });
         }
       });
@@ -1349,6 +1388,10 @@
       $("#app").html(this.el);
       $("#save").button().on("click", this.onSaveButton);
       $("#svg").button().on("click", this.onSVGButton);
+      $("#delete").button().on("click", this.onDeleteButton);
+      if (!knitplot.get("chart").id) {
+        $("#delete").button().hide();
+      }
       this.titleEdit = this.$("#title");
       this.onChangeTitle();
       library = new LibraryView({
@@ -1488,13 +1531,13 @@
     __extends(ChartListView, _super);
 
     function ChartListView() {
+      this.fetch = __bind(this.fetch, this);
+
       this.onClickPrevious = __bind(this.onClickPrevious, this);
 
       this.onClickNext = __bind(this.onClickNext, this);
 
       this.onClickNew = __bind(this.onClickNew, this);
-
-      this.onSaveChart = __bind(this.onSaveChart, this);
 
       this.onChangeChart = __bind(this.onChangeChart, this);
       return ChartListView.__super__.constructor.apply(this, arguments);
@@ -1510,12 +1553,11 @@
     };
 
     ChartListView.prototype.onChangeChart = function() {
-      var _ref;
-      return (_ref = knitplot.get("chart")) != null ? _ref.on("save", this.onSaveChart) : void 0;
-    };
-
-    ChartListView.prototype.onSaveChart = function() {
-      return this.fetch();
+      var _ref, _ref1;
+      if ((_ref = knitplot.get("chart")) != null) {
+        _ref.on("save", this.fetch);
+      }
+      return (_ref1 = knitplot.get("chart")) != null ? _ref1.on("destroy", this.fetch) : void 0;
     };
 
     ChartListView.prototype.onClickNew = function() {
