@@ -1080,6 +1080,10 @@
 
       this.logIn = __bind(this.logIn, this);
 
+      this.onPasswordKeyDown = __bind(this.onPasswordKeyDown, this);
+
+      this.onEmailKeyDown = __bind(this.onEmailKeyDown, this);
+
       this.render = __bind(this.render, this);
 
       this.initialize = __bind(this.initialize, this);
@@ -1103,8 +1107,22 @@
         title: "Log in to Knitplot!",
         modal: true
       });
+      $('#email').on("keydown", this.onEmailKeyDown);
+      $('#password').on("keydown", this.onPasswordKeyDown);
       $('#dialog-button-bar #cancel').button();
       return $('#dialog-button-bar #login').button();
+    };
+
+    LogInView.prototype.onEmailKeyDown = function(event) {
+      if (event.keyCode === 13) {
+        return $('#password').focus();
+      }
+    };
+
+    LogInView.prototype.onPasswordKeyDown = function(event) {
+      if (event.keyCode === 13) {
+        return this.logIn();
+      }
     };
 
     LogInView.prototype.logIn = function() {
