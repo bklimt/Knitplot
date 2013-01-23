@@ -20,6 +20,5 @@ class LoggedInView extends Parse.View
     new ConfirmationView
       message: "Are you sure you want to log out?"
       yes: ->
-        Parse.User.logOut()
-        knitplot.set "user", Parse.User.current()
+        knitplot.logOut()
 

@@ -97,6 +97,16 @@ class Knitplot extends Backbone.Model
         window.location.hash = "#"
 
 
+  logOut: (force) ->
+    if (not force) and @get("chart")?.dirty()
+      @confirmUnload
+        yes: => @logOut(true)
+      return
+    Parse.User.logOut()
+    knitplot.set "user", Parse.User.current()
+    @newChart(true)
+
+
   confirmUnload: (options) =>
     message = @confirmUnloadMessage()
     if message

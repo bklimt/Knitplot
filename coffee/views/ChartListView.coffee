@@ -10,6 +10,7 @@ class ChartListView extends Parse.View
 
 
   onChangeChart: =>
+    knitplot.on "change:user", @fetch
     knitplot.get("chart")?.on "save", @fetch
     knitplot.get("chart")?.on "destroy", @fetch
 

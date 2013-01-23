@@ -178,6 +178,22 @@
       });
     };
 
+    Knitplot.prototype.logOut = function(force) {
+      var _ref,
+        _this = this;
+      if ((!force) && ((_ref = this.get("chart")) != null ? _ref.dirty() : void 0)) {
+        this.confirmUnload({
+          yes: function() {
+            return _this.logOut(true);
+          }
+        });
+        return;
+      }
+      Parse.User.logOut();
+      knitplot.set("user", Parse.User.current());
+      return this.newChart(true);
+    };
+
     Knitplot.prototype.confirmUnload = function(options) {
       var message;
       message = this.confirmUnloadMessage();
@@ -1000,8 +1016,7 @@
       return new ConfirmationView({
         message: "Are you sure you want to log out?",
         yes: function() {
-          Parse.User.logOut();
-          return knitplot.set("user", Parse.User.current());
+          return knitplot.logOut();
         }
       });
     };
@@ -1555,6 +1570,7 @@
 
     ChartListView.prototype.onChangeChart = function() {
       var _ref, _ref1;
+      knitplot.on("change:user", this.fetch);
       if ((_ref = knitplot.get("chart")) != null) {
         _ref.on("save", this.fetch);
       }
