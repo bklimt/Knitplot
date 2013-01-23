@@ -18,6 +18,7 @@ class Knitplot extends Backbone.Model
           libraries: results
           defaultLibrary: results[0]
 
+        new AboutView()
         new UserView()
         new ChartListView()
         new ChartEditView()

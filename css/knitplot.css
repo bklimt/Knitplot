@@ -143,6 +143,11 @@ select {
     float: left;
 }
 
+#about-div {
+    float: right;
+    margin: 5px;
+}
+
 #user {
     float: right;
     margin: 5px;

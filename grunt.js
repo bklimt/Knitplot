@@ -38,6 +38,8 @@ module.exports = function(grunt) {
           "coffee/views/LibraryView.coffee",
 
           // Other dialogs.
+          "coffee/views/AboutView.coffee",
+          "coffee/views/AboutDialogView.coffee",
           "coffee/views/SVGPreviewView.coffee"
         ],
         dest: 'js/knitplot.js'
