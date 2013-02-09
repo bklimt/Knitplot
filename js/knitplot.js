@@ -1104,21 +1104,22 @@
     LogInView.prototype.render = function() {
       var template;
       template = $('#login-template').html();
-      $(this.el).html(template);
-      $(this.el).dialog({
+      this.$el.html(template);
+      this.$el.dialog({
         title: "Log in to Knitplot!",
+        close: this.cancel,
         modal: true
       });
-      $('#email').on("keydown", this.onEmailKeyDown);
-      $('#password').on("keydown", this.onPasswordKeyDown);
-      $('#dialog-button-bar #cancel').button();
-      $('#dialog-button-bar #login').button();
-      return $('#facebook').button().on("click", this.onFacebookClick);
+      this.$('#email').on("keydown", this.onEmailKeyDown);
+      this.$('#password').on("keydown", this.onPasswordKeyDown);
+      this.$('#cancel').button();
+      this.$('#login').button();
+      return this.$('#facebook').button().on("click", this.onFacebookClick);
     };
 
     LogInView.prototype.onEmailKeyDown = function(event) {
       if (event.keyCode === 13) {
-        return $('#password').focus();
+        return this.$('#password').focus();
       }
     };
 
@@ -1141,14 +1142,18 @@
                 return knitplot.set("user", Parse.User.current());
               },
               error: function(user, error) {
-                alert(error.message);
+                if (error.message) {
+                  alert(error.message);
+                }
                 return knitplot.set("user", Parse.User.current());
               }
             });
           });
         },
         error: function(user, error) {
-          alert(error.message);
+          if (error.message) {
+            alert(error.message);
+          }
           return knitplot.set("user", Parse.User.current());
         }
       });
@@ -1156,7 +1161,7 @@
 
     LogInView.prototype.logIn = function() {
       var _this = this;
-      return Parse.User.logIn($('#email').val(), $('#password').val(), {
+      return Parse.User.logIn(this.$('#email').val(), this.$('#password').val(), {
         success: function() {
           _this.$el.remove();
           return knitplot.set("user", Parse.User.current());
@@ -1169,7 +1174,7 @@
     };
 
     LogInView.prototype.cancel = function() {
-      return $(this.el).remove();
+      return this.$el.remove();
     };
 
     return LogInView;
@@ -1223,7 +1228,13 @@
     function SignUpView() {
       this.cancel = __bind(this.cancel, this);
 
-      this.signup = __bind(this.signup, this);
+      this.signUp = __bind(this.signUp, this);
+
+      this.onFacebookClick = __bind(this.onFacebookClick, this);
+
+      this.onPasswordKeyDown = __bind(this.onPasswordKeyDown, this);
+
+      this.onEmailKeyDown = __bind(this.onEmailKeyDown, this);
 
       this.render = __bind(this.render, this);
 
@@ -1232,7 +1243,7 @@
     }
 
     SignUpView.prototype.events = {
-      "click #signup": "signup",
+      "click #signup": "signUp",
       "click #cancel": "cancel"
     };
 
@@ -1243,23 +1254,69 @@
     SignUpView.prototype.render = function() {
       var template;
       template = $('#signup-template').html();
-      $(this.el).html(template);
-      $(this.el).dialog({
+      this.$el.html(template);
+      this.$el.dialog({
         title: "Sign up for Knitplot!",
+        close: this.cancel,
         modal: true
       });
-      $('#dialog-button-bar #cancel').button();
-      return $('#dialog-button-bar #signup').button();
+      this.$('#email').on("keydown", this.onEmailKeyDown);
+      this.$('#password').on("keydown", this.onPasswordKeyDown);
+      this.$('#cancel').button();
+      this.$('#signup').button();
+      return this.$('#facebook').button().on("click", this.onFacebookClick);
     };
 
-    SignUpView.prototype.signup = function() {
+    SignUpView.prototype.onEmailKeyDown = function(event) {
+      if (event.keyCode === 13) {
+        return this.$('#password').focus();
+      }
+    };
+
+    SignUpView.prototype.onPasswordKeyDown = function(event) {
+      if (event.keyCode === 13) {
+        return this.logIn();
+      }
+    };
+
+    SignUpView.prototype.onFacebookClick = function(event) {
       var _this = this;
-      return Parse.User.signUp($('#email').val(), $('#password').val(), {
-        email: $('#email').val(),
-        name: $('#email').val()
+      return Parse.FacebookUtils.logIn("", {
+        success: function() {
+          return FB.api('/me', function(me) {
+            return Parse.User.current().save({
+              name: me.name
+            }, {
+              success: function() {
+                _this.$el.remove();
+                return knitplot.set("user", Parse.User.current());
+              },
+              error: function(user, error) {
+                if (error.message) {
+                  alert(error.message);
+                }
+                return knitplot.set("user", Parse.User.current());
+              }
+            });
+          });
+        },
+        error: function(user, error) {
+          if (error.message) {
+            alert(error.message);
+          }
+          return knitplot.set("user", Parse.User.current());
+        }
+      });
+    };
+
+    SignUpView.prototype.signUp = function() {
+      var _this = this;
+      return Parse.User.signUp(this.$('#email').val(), this.$('#password').val(), {
+        email: this.$('#email').val(),
+        name: this.$('#email').val()
       }, {
         success: function() {
-          $(_this.el).remove();
+          _this.$el.remove();
           return new LoggedInView();
         },
         error: function(user, error) {
@@ -1269,7 +1326,7 @@
     };
 
     SignUpView.prototype.cancel = function() {
-      return $(this.el).remove();
+      return this.$el.remove();
     };
 
     return SignUpView;
