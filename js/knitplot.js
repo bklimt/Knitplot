@@ -1005,7 +1005,7 @@
       var template;
       template = _.template($('#logged-in-template').html());
       $(this.el).html(template({
-        username: Parse.User.current().get('username')
+        username: Parse.User.current().get('name')
       }));
       $('#user').html(this.el);
       $('#username').button();
@@ -1080,6 +1080,8 @@
 
       this.logIn = __bind(this.logIn, this);
 
+      this.onFacebookClick = __bind(this.onFacebookClick, this);
+
       this.onPasswordKeyDown = __bind(this.onPasswordKeyDown, this);
 
       this.onEmailKeyDown = __bind(this.onEmailKeyDown, this);
@@ -1110,7 +1112,8 @@
       $('#email').on("keydown", this.onEmailKeyDown);
       $('#password').on("keydown", this.onPasswordKeyDown);
       $('#dialog-button-bar #cancel').button();
-      return $('#dialog-button-bar #login').button();
+      $('#dialog-button-bar #login').button();
+      return $('#facebook').button().on("click", this.onFacebookClick);
     };
 
     LogInView.prototype.onEmailKeyDown = function(event) {
@@ -1123,6 +1126,32 @@
       if (event.keyCode === 13) {
         return this.logIn();
       }
+    };
+
+    LogInView.prototype.onFacebookClick = function(event) {
+      var _this = this;
+      return Parse.FacebookUtils.logIn("", {
+        success: function() {
+          return FB.api('/me', function(me) {
+            return Parse.User.current().save({
+              name: me.name
+            }, {
+              success: function() {
+                _this.$el.remove();
+                return knitplot.set("user", Parse.User.current());
+              },
+              error: function(user, error) {
+                alert(error.message);
+                return knitplot.set("user", Parse.User.current());
+              }
+            });
+          });
+        },
+        error: function(user, error) {
+          alert(error.message);
+          return knitplot.set("user", Parse.User.current());
+        }
+      });
     };
 
     LogInView.prototype.logIn = function() {
@@ -1226,7 +1255,8 @@
     SignUpView.prototype.signup = function() {
       var _this = this;
       return Parse.User.signUp($('#email').val(), $('#password').val(), {
-        email: $('#email').val()
+        email: $('#email').val(),
+        name: $('#email').val()
       }, {
         success: function() {
           $(_this.el).remove();
