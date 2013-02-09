@@ -12,7 +12,7 @@ class ChartEditView extends Parse.View
     knitplot.on "change:chart", @onChangeChart
     @render()
 
- 
+
   onChangeChart: =>
     chart = knitplot.get "chart"
     if chart

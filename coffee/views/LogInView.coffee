@@ -15,6 +15,7 @@ class LogInView extends Parse.View
     $('#password').on "keydown", @onPasswordKeyDown
     $('#dialog-button-bar #cancel').button()
     $('#dialog-button-bar #login').button()
+    $('#facebook').button().on "click", @onFacebookClick
 
   onEmailKeyDown: (event) =>
     if event.keyCode == 13
@@ -23,6 +24,23 @@ class LogInView extends Parse.View
   onPasswordKeyDown: (event) =>
     if event.keyCode == 13
       @logIn()
+
+  onFacebookClick: (event) =>
+    Parse.FacebookUtils.logIn "",
+      success: =>
+        FB.api '/me', (me) =>
+          Parse.User.current().save
+            name: me.name
+          ,
+            success: =>
+              @$el.remove()
+              knitplot.set "user", Parse.User.current()
+            error: (user, error) =>
+              alert(error.message)
+              knitplot.set "user", Parse.User.current()
+      error: (user, error) =>
+        alert(error.message)
+        knitplot.set "user", Parse.User.current()
 
   logIn: =>
     Parse.User.logIn $('#email').val(), $('#password').val(),

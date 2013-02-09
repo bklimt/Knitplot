@@ -9,7 +9,7 @@ class LoggedInView extends Parse.View
   render: =>
     template = _.template($('#logged-in-template').html())
     $(@el).html(template(
-      username: Parse.User.current().get('username')
+      username: Parse.User.current().get('name')
     ))
     $('#user').html(@el)
     $('#username').button()
