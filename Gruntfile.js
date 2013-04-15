@@ -80,6 +80,11 @@ module.exports = function(grunt) {
             "css/knitplot.css"
           ]
         }
+      },
+      images: {
+        files: {
+          "build/spinner.gif": ["images/spinner.gif"]
+        }
       }
     }
   });
