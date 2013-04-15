@@ -11,11 +11,11 @@ app.use(express.logger("dev"));
 
 app.get("/js/knitplot.js", function(request, response) {
   child_process.exec("grunt", function(error, stdout, stderr) {
+    console.log(stdout);
+    console.error(stderr);
     if (error) {
       throw error;
     }
-    console.log(stdout);
-    console.error(stderr);
     fs.readFile("./js/knitplot.js", function(err, text) {
       response.set("Content-Type", "application/javascript");
       response.send(text);
@@ -39,11 +39,16 @@ app.get(/^(\/(css|js|images)\/(.*)\.(css|js|png|gif))$/, function(request, respo
 });
 
 app.get("/", function(request, response) {
-  fs.readFile("./index.jade", function(err, jadeCode) {
-    template = jade.compile(jadeCode, { filename: "./index.jade" });
-    html = template();
-    response.set("Content-Type", "text/html");
-    response.send(html);
+  child_process.exec("grunt", function(error, stdout, stderr) {
+    console.log(stdout);
+    console.error(stderr);
+    if (error) {
+      throw error;
+    }
+    fs.readFile("./index.html", function(err, text) {
+      response.set("Content-Type", "text/html");
+      response.send(text);
+    });
   });
 });
 

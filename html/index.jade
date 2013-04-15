@@ -1,0 +1,39 @@
+html
+  head
+    title Knitplot
+    link(href="knitplot.css", rel="stylesheet", type="text/css")
+    script(src="ext.js", type="application/javascript")
+    script(src="knitplot.js", type="application/javascript")
+
+  body.vertical
+    include templates/facebook.html
+    #topbar
+      #logo
+        h1
+          a(href="#") KnitPlot
+        h2 A tool for knitters.
+      #user
+      #about-div
+        #about About KnitPlot
+    .fill.horizontal
+      #leftbar Content
+      #main.fill.vertical
+        #notification
+        #app.fill.vertical
+      #rightbar Content
+
+    include templates/chart
+    include templates/library
+    include templates/chart_list.html
+    include templates/confirmation
+    include templates/logged_in
+    include templates/logged_out
+    include templates/login
+    include templates/need_to_sign_up
+    include templates/signup
+    include templates/about
+    include templates/svg_preview
+
+    script(type="text/javascript")
+      $(function() { window.knitplot = new Knitplot(); });
+

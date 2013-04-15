@@ -1,0 +1,83 @@
+<html><head><title>Knitplot</title><link href="css/reset.css" rel="stylesheet" type="text/css"/><link href="css/codemirror.css" rel="stylesheet" type="text/css"/><link href="css/solarized.css" rel="stylesheet" type="text/css"/><link href="css/ui-lightness/jquery-ui-1.8.21.custom.css" rel="stylesheet" type="text/css"/><link href="css/knitplot.css" rel="stylesheet" type="text/css"/><script src="js/codemirror.js" type="application/javascript"></script><script src="js/codemirror-mode.js" type="application/javascript"></script><script src="js/underscore-1.3.3.js" type="application/javascript"></script><script src="js/jquery-1.7.2.js" type="application/javascript"></script><script src="js/jquery.dotimeout.js" type="application/javascript"></script><script src="js/jquery-ui-1.8.21.custom.min.js" type="application/javascript"></script><script src="js/raphael-2.1.0.js" type="application/javascript"></script><script src="js/backbone-0.9.9.js" type="application/javascript"></script><script src="js/parse-1.1.15.js" type="application/javascript"></script><script src="js/knitplot.js" type="application/javascript"></script></head><body class="vertical"><div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    // FB.init({
+    Parse.FacebookUtils.init({
+      appId      : '357080624400068', // App ID from the App Dashboard
+      channelUrl : '//knitplot.com/channel.html', // Channel File for x-domain communication
+      status     : true, // check the login status upon init?
+      cookie     : true, // set sessions cookies to allow your server to access the session?
+      xfbml      : true  // parse XFBML tags on this page?
+    });
+
+    // Additional initialization code such as adding Event Listeners goes here
+
+  };
+
+  // Load the SDK's source Asynchronously
+  // Note that the debug version is being actively developed and might 
+  // contain some type checks that are overly strict. 
+  // Please report such bugs using the bugs tool.
+  (function(d, debug){
+     var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all" + (debug ? "/debug" : "") + ".js";
+     ref.parentNode.insertBefore(js, ref);
+   }(document, /*debug*/ false));
+</script>
+<div id="topbar"><div id="logo"><h1><a href="#">KnitPlot</a></h1><h2>A tool for knitters.</h2></div><div id="user"></div><div id="about-div"><div id="about">About KnitPlot</div></div></div><div class="fill horizontal"><div id="leftbar">Content</div><div id="main" class="fill vertical"><div id="notification"></div><div id="app" class="fill vertical"></div></div><div id="rightbar">Content</div></div><script id="chart-template" type="text/template"><div class="fill vertical"><div id="toolbar" class="horizontal"><label for="title">Title:</label><input id="title" type="text" class="fill"/><div id="buttons"><button id="svg">Open&nbsp;SVG</button><button id="delete">Delete</button><button id="save"><%= model.isNew() ? "Create" : "Save" %></button></div></div><div style="height: 100px" class="fill horizontal"><div id="chartwrapper" class="fill vertical"><div id="chart" class="fill"></div></div><div id="textwrapper" class="fill vertical"><textarea id="text"></textarea><div id="errors" class="ui-state-error"></div></div></div><div class="vertical"><center><div id="library"></div></center></div></div></script><script id="library-template" type="text/template"><table><tr><td colspan="14"><select id="library-select">   <% _.each(libraries, function(aLibrary) { %>
+     <% var selected = (aLibrary.id == library.id); %>
+     <% selected = selected ? "selected=\"selected\"" : ""; %>
+     <option value="<%= aLibrary.id %>" <%= selected %>>
+       <%= aLibrary.get("name") %>
+     </option>
+   <% }); %></select></td>   <% var i = 0; %>
+   <% _.each(library.get("data"), function(action, name) { %>
+     <td style="padding-left: 5px; padding-top: 5px">
+       <%= Knitplot.Models.Graphic.fromAction(action, 32, 32).svg() %>
+     </td>
+     <td style="padding-right: 5px; padding-top: 10px">
+       <%= name %>
+     </td>
+     <% if ((++i + 7) % 10 == 0) { %>
+       </tr><tr>
+     <% } %>
+   <% }); %></tr></table></script><script type="text/template" id="chart-list-template">
+  <table>
+    <tr>
+      <td>
+        <button id="new">New Chart</button>
+      </td>
+      <td>
+        <img id="spinner" src="images/spinner.gif" style="width: 20px; height: 20px" />
+      </td>
+    </tr>
+  </table>
+  <ul>
+    <% _.each(collection, function(item) { %>
+      <li><a href="javascript:knitplot.editChart('<%= item.id %>')"><%= item.escape('title') %></a></li>
+    <% }); %>
+  </ul>
+  <% if (start > 0) { %>
+    <div id="previous">
+      <span class="ui-icon ui-icon-seek-first"></span>
+    </div>
+  <% } %>
+  <% if (next > 0) { %>
+    <div id="next">
+      <span class="ui-icon ui-icon-seek-end"></span>
+    </div>
+  <% } %>
+</script>
+<script id="confirmation-template" type="text/template"><div id="confirmation-dialog"><div id="confirmation-message"><%= message %></div><br/><div id="dialog-button-bar"><button id="no">No</button><button id="yes">Yes</button></div></div></script><script id="logged-in-template" type="text/template"><div id="username"><%= username %></div></script><script id="logged-out-template" type="text/template"><div id="signup">Sign Up</div><div id="login">Log In</div></script><script id="login-template" type="text/template"><div id="login-dialog"><table><tr><td><label for="email">Email:</label></td><td><input id="email" type="text"/></td></tr><tr><td><label for="password">Password:</label></td><td><input id="password" type="password"/></td></tr><tr><td colspan="2" style="text-align: center">- or -</td></tr><tr><td colspan="2" style="text-align: center"><div id="facebook">Log In with Facebook</div></td></tr><tr><td colspan="2"><div id="dialog-button-bar"><button id="cancel">Cancel :(</button><button id="login">Log In!</button></div></td></tr></table></div></script><script id="need-to-sign-up-template" type="text/template"><div id="need-to-sign-up-dialog"><table><tr><td>You need to sign up or log in to save your chart.
+Look in the upper right corner.</td></tr><tr><td><div id="dialog-button-bar"><button id="okay">Okay</button></div></td></tr></table></div></script><script id="signup-template" type="text/template"><div id="signup-dialog"><table><tr><td><label for="email">Email:</label></td><td><input id="email" type="text"/><br/></td></tr><tr><td><label for="password">Password:</label></td><td><input id="password" type="password"/></td></tr><tr><td colspan="2" style="text-align: center">- or -</td></tr><tr><td colspan="2" style="text-align: center"><div id="facebook">Log In with Facebook</div></td></tr><tr><td colspan="2"><div id="dialog-button-bar"><button id="cancel">Cancel :(</button><button id="signup">Sign Up!</button></div></td></tr></table></div></script><script id="about-template" type="text/template"><div id="about-dialog"><table><tr><td>KnitPlot is an open source app for making knitting pattern charts.
+For feedback or bug reports, email bklimt@gmail.com.</td></tr><tr><td><div id="dialog-button-bar"><button id="okay">Okay</button></div></td></tr></table></div></script><script id="svg-preview-template" type="text/template"><div id="svg-preview-dialog"><table><tr><td rowspan="2"><iframe id="svg-preview-iframe" src="<%= url %>"></iframe></td><td>&nbsp;<br/>
+Right-click <a href="<%= url %>">here</a> and choose "Save Link As...".<br/>
+&nbsp;<br/>
+If you're using a trackpad, it's usually 2-finger click.<br/>
+&nbsp;<br/>
+Or you can hold down "control" while you click.<br/>
+&nbsp;<br/></td></tr><tr><td><div id="dialog-button-bar"><button id="okay">Okay</button></div></td></tr></table></div></script><script type="text/javascript">$(function() { window.knitplot = new Knitplot(); });
+</script></body></html>

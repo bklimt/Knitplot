@@ -1,0 +1,18 @@
+script#chart-template(type="text/template")
+  .fill.vertical
+    #toolbar.horizontal
+      label(for="title") Title:
+      input.fill#title(type="text")
+      #buttons
+        button#svg Open&nbsp;SVG
+        button#delete Delete
+        button#save <%= model.isNew() ? "Create" : "Save" %>
+    .fill.horizontal(style="height: 100px")
+      #chartwrapper.fill.vertical
+        #chart.fill
+      #textwrapper.fill.vertical
+        textarea#text
+        #errors.ui-state-error
+    .vertical
+      center
+        #library

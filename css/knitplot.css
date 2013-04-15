@@ -1,18 +1,39 @@
-html {
+
+/* Layout-related Classes */
+
+.horizontal {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
 }
+
+.vertical {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+}
+
+.fill {
+    flex: 1 0 auto;
+    -webkit-flex: 1 0 auto;
+    -ms-flex: 1 0 auto;
+}
+
+/* Basic Page Look-and-Feel */
 
 body {
     text-align: left;
     font-family: Helvetica;
     color: #555555;
     background-color: #cccccc;
-}
-
-div {
-}
-
-table {
-    width: 100%;
 }
 
 h1 {
@@ -81,7 +102,6 @@ input[name=title] {
 }
 
 textarea[name=text] {
-    width: 100%;
     height: 300px;
     font-size: 15px;
     float: right;
@@ -94,6 +114,8 @@ button {
 select {
     margin: 5px;
 }
+
+/* Styles for particular UI elements */
 
 #confirmation-message {
     font-weight: bold;
@@ -116,14 +138,12 @@ select {
 
 #topbar {
     height: 45px;
-    width: 100%;
     /* background-color: red; */
     background-color: #f6a828;
 }
 
 #leftbar {
     width: 180px;
-    height: 100%;
     background-color: #f6a828;
     border-radius: 5px;
     margin: 5px;
@@ -154,7 +174,6 @@ select {
 }
 
 #main {
-    width: 100%;
     /* background-color: green; */
 }
 
@@ -163,39 +182,21 @@ select {
 }
 
 #chart {
-    width: 380px;
-    height: 350px;
+    min-width: 100px;
+    min-height: 100px;
     margin: 5px;
 }
 
 #text {
-    width: 324px;
-    height: 350px;
+    min-width: 100px;
+    min-height: 100px;
 }
 
 #library {
 }
 
-.CodeMirror {
-    border: solid black 1px;
-    margin: 5px;
-    margin-right: 10px;
-    min-width: 320px;
-}
-
-.cm-s-solarized.cm-s-light .CodeMirror-selected {
-    background: #d7d4f0;
-    /*background: #eee8d5;*/
-    color: inherit;
-}
-
-.error-mark {
-    color: red !important;
-    text-decoration: underline;
-}
-
 #errors {
-    min-width: 300px;
+    min-width: 100px;
     height: 36px;
     padding: 5px;
     margin: 5px;
@@ -233,5 +234,43 @@ select {
 
 #save {
     margin: 5px;
+}
+
+/* CodeMirror Style Override */
+
+.CodeMirror {
+    border: solid black 1px;
+    margin: 5px;
+    margin-right: 10px;
+    min-width: 100px;
+
+    flex: 1 0 auto;
+    -webkit-flex: 1 0 auto;
+    -ms-flex: 1 0 auto;
+
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+}
+
+.CodeMirror-scroll {
+    flex: 1 0 auto;
+    -webkit-flex: 1 0 auto;
+    -ms-flex: 1 0 auto;
+}
+
+.cm-s-solarized.cm-s-light .CodeMirror-selected {
+    background: #d7d4f0;
+    /*background: #eee8d5;*/
+    color: inherit;
+}
+
+.error-mark {
+    color: red !important;
+    text-decoration: underline;
 }
 
